@@ -1,0 +1,57 @@
+/* ============================================================
+   GLOBAL DESIGN TOKENS — Bundu Foods
+   Ported from the original single-file site.
+   Edit colours/fonts here — they cascade everywhere via Tailwind
+   utilities (see tailwind.config) and CSS variables below.
+============================================================ */
+@import "tailwindcss";
+
+:root {
+  /* Fonts */
+  --font-display: 'Playfair Display', serif;
+  --font-script: 'Caveat', cursive;
+  --font-body: 'Inter', sans-serif;
+
+  /* Colours — kraft paper / chalkboard palette */
+  --paper: #f4eddc;
+  --paper-dark: #e8dcc0;
+  --kraft: #c8a875;
+  --burgundy: #8a2c20;
+  --burgundy-deep: #5e1d14;
+  --moss: #4a5c3a;
+  --moss-deep: #2d3a22;
+  --chalk-bg: #1a2620;
+  --chalk-yellow: #f4c542;
+  --ink: #2a2118;
+  --ink-soft: #5c4d3c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* Utility classes that map to the design tokens for use in components */
+.font-display { font-family: var(--font-display); }
+.font-script { font-family: var(--font-script); }
+.bg-paper { background-color: var(--paper); }
+.bg-paper-dark { background-color: var(--paper-dark); }
+.bg-burgundy { background-color: var(--burgundy); }
+.bg-burgundy-deep { background-color: var(--burgundy-deep); }
+.bg-moss { background-color: var(--moss); }
+.bg-chalk { background-color: var(--chalk-bg); }
+.text-burgundy { color: var(--burgundy); }
+.text-moss { color: var(--moss); }
+.text-chalk-yellow { color: var(--chalk-yellow); }
+.text-ink { color: var(--ink); }
+.text-ink-soft { color: var(--ink-soft); }
+.border-kraft { border-color: var(--kraft); }
