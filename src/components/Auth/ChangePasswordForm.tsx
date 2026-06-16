@@ -6,6 +6,7 @@
 
 import { useState } from 'react';
 import { changePassword } from '@/services/authService';
+import PasswordInput from '@/components/UI/PasswordInput';
 
 export default function ChangePasswordForm() {
   const [current, setCurrent] = useState('');
@@ -63,18 +64,15 @@ export default function ChangePasswordForm() {
 
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wide text-ink-soft mb-1">Current Password</label>
-          <input type="password" value={current} onChange={e => setCurrent(e.target.value)}
-            className="w-full px-3 py-2.5 border border-paper-dark rounded text-sm bg-paper focus:border-burgundy focus:bg-white outline-none" />
+          <PasswordInput value={current} onChange={setCurrent} placeholder="Current password" />
         </div>
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wide text-ink-soft mb-1">New Password</label>
-          <input type="password" value={newPw} onChange={e => setNewPw(e.target.value)} placeholder="Min 6 characters"
-            className="w-full px-3 py-2.5 border border-paper-dark rounded text-sm bg-paper focus:border-burgundy focus:bg-white outline-none" />
+          <PasswordInput value={newPw} onChange={setNewPw} placeholder="Min 6 characters" />
         </div>
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wide text-ink-soft mb-1">Confirm New Password</label>
-          <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)}
-            className="w-full px-3 py-2.5 border border-paper-dark rounded text-sm bg-paper focus:border-burgundy focus:bg-white outline-none" />
+          <PasswordInput value={confirm} onChange={setConfirm} placeholder="Repeat new password" />
         </div>
 
         <button

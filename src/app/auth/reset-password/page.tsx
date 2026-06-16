@@ -7,6 +7,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import PasswordInput from '@/components/UI/PasswordInput';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -60,23 +61,11 @@ export default function ResetPasswordPage() {
             )}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wide text-ink-soft mb-1">New Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="Min 6 characters"
-                className="w-full px-3 py-2.5 border border-paper-dark rounded text-sm bg-white focus:border-burgundy outline-none"
-              />
+              <PasswordInput value={password} onChange={setPassword} placeholder="Min 6 characters" />
             </div>
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wide text-ink-soft mb-1">Confirm Password</label>
-              <input
-                type="password"
-                value={confirm}
-                onChange={e => setConfirm(e.target.value)}
-                placeholder="Repeat password"
-                className="w-full px-3 py-2.5 border border-paper-dark rounded text-sm bg-white focus:border-burgundy outline-none"
-              />
+              <PasswordInput value={confirm} onChange={setConfirm} placeholder="Repeat password" />
             </div>
             <button
               type="submit"
