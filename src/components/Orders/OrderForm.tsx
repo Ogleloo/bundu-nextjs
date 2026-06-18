@@ -1,12 +1,12 @@
 // ============================================================
 // ORDER FORM — customer order submission
-// Used in src/app/orders/page.tsx (requires login)
+// reply_pref hardcoded to 'whatsapp' — all notifications via WA
 // ============================================================
 'use client';
 
 import { useState } from 'react';
 import { submitOrder } from '@/services/orderService';
-import type { OrderType, ReplyPreference, Profile } from '@/types';
+import type { OrderType, Profile } from '@/types';
 
 interface OrderFormProps {
   profile: Profile;
@@ -19,17 +19,10 @@ const ORDER_TYPES: { value: OrderType; label: string }[] = [
   { value: 'event', label: 'Event Booking' },
 ];
 
-const REPLY_PREFS: { value: ReplyPreference; label: string; icon: string }[] = [
-  { value: 'whatsapp', label: 'WhatsApp', icon: '💬' },
-  { value: 'call', label: 'Phone Call', icon: '📞' },
-  { value: 'either', label: 'Either', icon: '✅' },
-];
-
 export default function OrderForm({ profile }: OrderFormProps) {
   const [orderDetails, setOrderDetails] = useState('');
   const [orderType, setOrderType] = useState<OrderType>('dine-in');
   const [notes, setNotes] = useState('');
-  const [replyPref, setReplyPref] = useState<ReplyPreference>('whatsapp');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [successRef, setSuccessRef] = useState<string | null>(null);
@@ -39,7 +32,7 @@ export default function OrderForm({ profile }: OrderFormProps) {
     setError('');
     setSubmitting(true);
 
-    const result = await submitOrder(profile, { orderDetails, orderType, notes, replyPref });
+    const result = await submitOrder(profile, { orderDetails, orderType, notes });
     setSubmitting(false);
 
     if (!result.success) {
@@ -62,7 +55,7 @@ export default function OrderForm({ profile }: OrderFormProps) {
         <div className="text-5xl mb-3">🍳</div>
         <h2 className="font-display text-2xl mb-2">Order Received!</h2>
         <p className="text-ink-soft mb-4 text-sm">
-          We&apos;ll confirm your order shortly via your preferred contact method.
+          We&apos;ll send you a WhatsApp message when your order is ready.
         </p>
         <div className="inline-block bg-chalk text-chalk-yellow font-script text-2xl px-6 py-2 rounded mb-4 tracking-widest">
           {successRef}
@@ -125,27 +118,6 @@ export default function OrderForm({ profile }: OrderFormProps) {
           >
             {ORDER_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
           </select>
-        </div>
-
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wide text-ink-soft mb-2">
-            How should we reply to you? *
-          </label>
-          <div className="grid grid-cols-3 gap-2">
-            {REPLY_PREFS.map(p => (
-              <button
-                key={p.value}
-                type="button"
-                onClick={() => setReplyPref(p.value)}
-                className={`flex flex-col items-center gap-1 py-3 px-2 rounded border-[1.5px] text-xs font-semibold uppercase tracking-wide transition-colors ${
-                  replyPref === p.value ? 'border-burgundy bg-red-50 text-burgundy' : 'border-paper-dark bg-paper text-ink-soft'
-                }`}
-              >
-                <span className="text-lg">{p.icon}</span>
-                {p.label}
-              </button>
-            ))}
-          </div>
         </div>
 
         <div>
