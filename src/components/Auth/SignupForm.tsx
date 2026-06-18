@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { signUp } from '@/services/authService';
 import { useAuth } from '@/hooks/useAuth';
+import PasswordInput from '@/components/UI/PasswordInput';
 
 export default function SignupForm() {
   const router = useRouter();
@@ -116,12 +117,10 @@ export default function SignupForm() {
         <label className="block text-xs font-semibold uppercase tracking-wide text-ink-soft mb-1">
           Password
         </label>
-        <input
-          type="password"
+        <PasswordInput
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={setPassword}
           placeholder="Choose a password (min 6 characters)"
-          className="w-full px-3 py-2.5 border border-paper-dark rounded text-sm bg-white focus:border-burgundy outline-none"
         />
       </div>
 

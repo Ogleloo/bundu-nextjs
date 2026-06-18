@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { logIn, requestPasswordReset } from '@/services/authService';
 import { useAuth } from '@/hooks/useAuth';
+import PasswordInput from '@/components/UI/PasswordInput';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -80,12 +81,10 @@ export default function LoginForm() {
           <label className="block text-xs font-semibold uppercase tracking-wide text-ink-soft mb-1">
             Password
           </label>
-          <input
-            type="password"
+          <PasswordInput
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={setPassword}
             placeholder="Your password"
-            className="w-full px-3 py-2.5 border border-paper-dark rounded text-sm bg-white focus:border-burgundy outline-none"
           />
         </div>
 
