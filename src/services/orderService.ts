@@ -4,7 +4,7 @@
 // src/app/orders/*, src/app/dashboard/*
 // ============================================================
 import { createClient } from '@/lib/supabase/client';
-import type { Order, OrderType, ReplyPreference, OrderStatus, Profile } from '@/types';
+import type { Order, OrderType, OrderStatus, Profile } from '@/types';
 
 const supabase = createClient();
 
@@ -17,7 +17,7 @@ export interface SubmitOrderInput {
   orderDetails: string;
   orderType: OrderType;
   notes: string;
-  replyPref: ReplyPreference;
+  // reply_pref hardcoded to 'whatsapp' — all notifications via WhatsApp
 }
 
 export interface SubmitOrderResult {
@@ -43,7 +43,7 @@ export async function submitOrder(profile: Profile, input: SubmitOrderInput): Pr
     order_details: input.orderDetails.trim(),
     order_type: input.orderType,
     notes: input.notes.trim() || null,
-    reply_pref: input.replyPref,
+    reply_pref: 'whatsapp',
     status: 'new' as OrderStatus,
     processed_by: null,
   });

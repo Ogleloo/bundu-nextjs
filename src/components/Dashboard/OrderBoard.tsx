@@ -1,7 +1,9 @@
 // ============================================================
-// ORDER BOARD — main staff dashboard order management
-// Used in src/app/dashboard/page.tsx after staff login
-// Realtime updates via subscribeToOrders (orderService)
+// ORDER BOARD — staff dashboard order management
+// Button flow:
+//   New order    → "Order Received" (sends WA: we got your order)
+//   In Progress  → "Ready for Collection" (sends WA: order is ready)
+// Each WA button can only be pressed ONCE — disappears after sending
 // ============================================================
 'use client';
 
@@ -29,12 +31,6 @@ const TYPE_LABELS: Record<OrderType, string> = {
   event: '🎉 Event',
 };
 
-const REPLY_LABELS: Record<string, string> = {
-  whatsapp: 'WhatsApp',
-  call: 'Phone Call',
-  either: 'Any Method',
-};
-
 const STATUS_BORDER: Record<OrderStatus, string> = {
   new: 'border-l-red-500',
   progress: 'border-l-amber-500',
@@ -44,7 +40,7 @@ const STATUS_BORDER: Record<OrderStatus, string> = {
 const STATUS_BADGE: Record<OrderStatus, { label: string; className: string }> = {
   new: { label: 'New', className: 'bg-red-500/15 text-red-400' },
   progress: { label: 'In Progress', className: 'bg-amber-500/15 text-amber-400' },
-  done: { label: 'Done', className: 'bg-green-500/15 text-green-400' },
+  done: { label: 'Completed ✓', className: 'bg-green-500/15 text-green-400' },
 };
 
 const FILTERS: { value: FilterType; label: string }[] = [
@@ -62,6 +58,12 @@ export default function OrderBoard({ staff }: OrderBoardProps) {
   const [filter, setFilter] = useState<FilterType>('all');
   const [loading, setLoading] = useState(true);
 
+  // Track which WA messages have been sent this session
+  // receivedSent = "Order Received" WA sent
+  // readySent    = "Ready for Collection" WA sent
+  const [receivedSent, setReceivedSent] = useState<Set<string>>(new Set());
+  const [readySent, setReadySent] = useState<Set<string>>(new Set());
+
   const loadOrders = useCallback(async () => {
     const data = await getAllOrders();
     setOrders(data);
@@ -70,26 +72,39 @@ export default function OrderBoard({ staff }: OrderBoardProps) {
 
   useEffect(() => {
     loadOrders();
-    // Realtime subscription — replaces the old 30s polling interval
     const unsubscribe = subscribeToOrders(loadOrders);
     return unsubscribe;
   }, [loadOrders]);
 
-  async function handleStart(order: Order) {
+  // Step 1: Staff presses "Order Received"
+  // → Marks order as In Progress
+  // → Sends WA: "Hi [name], Bundu Foods received your order BND-XXXX and we're preparing it now!"
+  async function handleReceived(order: Order) {
     await updateOrderStatus(order.id, 'progress', staff.name);
+    if (order.wa) {
+      const msg = encodeURIComponent(
+        `Hi ${order.name}! 👋 Bundu Foods has received your order *${order.id}* and we're preparing it now. We'll message you again when it's ready. — Bundu Foods`
+      );
+      window.open(`https://wa.me/${order.wa}?text=${msg}`, '_blank');
+      setReceivedSent(prev => new Set(prev).add(order.id));
+    }
     loadOrders();
   }
 
-  async function handleComplete(order: Order) {
+  // Step 2: Staff presses "Ready for Collection"
+  // → Marks order as Done
+  // → Sends WA: "Hi [name], your order BND-XXXX is ready for collection!"
+  async function handleReady(order: Order) {
     await updateOrderStatus(order.id, 'done', staff.name);
-    loadOrders();
-    if (order.wa && confirm(`Order marked Done! ✓\nSend WhatsApp notification to ${order.name}?`)) {
+    if (order.wa) {
       window.open(buildNotifyWhatsAppUrl(order), '_blank');
+      setReadySent(prev => new Set(prev).add(order.id));
     }
+    loadOrders();
   }
 
   async function handleDelete(order: Order) {
-    if (!confirm('Remove this order?')) return;
+    if (!confirm('Remove this order from the dashboard?')) return;
     await deleteOrder(order.id);
     loadOrders();
   }
@@ -98,7 +113,9 @@ export default function OrderBoard({ staff }: OrderBoardProps) {
     new: orders.filter(o => o.status === 'new').length,
     progress: orders.filter(o => o.status === 'progress').length,
     done: orders.filter(o => o.status === 'done').length,
-    today: orders.filter(o => new Date(o.created_at).toDateString() === new Date().toDateString()).length,
+    today: orders.filter(o =>
+      new Date(o.created_at).toDateString() === new Date().toDateString()
+    ).length,
   };
 
   const filtered = orders.filter(o => {
@@ -124,15 +141,18 @@ export default function OrderBoard({ staff }: OrderBoardProps) {
             key={f.value}
             onClick={() => setFilter(f.value)}
             className={`px-4 py-2 rounded text-xs font-semibold uppercase tracking-wide border transition-colors ${
-              filter === f.value ? 'bg-burgundy border-burgundy text-paper' : 'border-[#333] text-[#888] hover:border-[#555]'
+              filter === f.value
+                ? 'border-burgundy text-paper'
+                : 'border-[#333] text-[#888] hover:border-[#555]'
             }`}
+            style={filter === f.value ? { backgroundColor: 'var(--burgundy)' } : {}}
           >
             {f.label}
           </button>
         ))}
       </div>
 
-      {/* Orders grid */}
+      {/* Orders */}
       <div className="px-4 md:px-8 py-6">
         {loading ? (
           <p className="text-[#555] text-sm">Loading orders...</p>
@@ -148,8 +168,10 @@ export default function OrderBoard({ staff }: OrderBoardProps) {
               <OrderCard
                 key={order.id}
                 order={order}
-                onStart={() => handleStart(order)}
-                onComplete={() => handleComplete(order)}
+                receivedSent={receivedSent.has(order.id)}
+                readySent={readySent.has(order.id)}
+                onReceived={() => handleReceived(order)}
+                onReady={() => handleReady(order)}
                 onDelete={() => handleDelete(order)}
               />
             ))}
@@ -170,60 +192,118 @@ function Stat({ label, value, color }: { label: string; value: number; color: st
 }
 
 function OrderCard({
-  order, onStart, onComplete, onDelete,
-}: { order: Order; onStart: () => void; onComplete: () => void; onDelete: () => void }) {
-  const time = new Date(order.created_at).toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' });
-  const date = new Date(order.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' });
+  order,
+  receivedSent,
+  readySent,
+  onReceived,
+  onReady,
+  onDelete,
+}: {
+  order: Order;
+  receivedSent: boolean;
+  readySent: boolean;
+  onReceived: () => void;
+  onReady: () => void;
+  onDelete: () => void;
+}) {
+  const time = new Date(order.created_at).toLocaleTimeString('en-ZA', {
+    hour: '2-digit', minute: '2-digit',
+  });
+  const date = new Date(order.created_at).toLocaleDateString('en-ZA', {
+    day: 'numeric', month: 'short',
+  });
   const badge = STATUS_BADGE[order.status];
 
   return (
     <div className={`bg-[#1a1a1a] border border-[#2a2a2a] rounded-md overflow-hidden border-l-[3px] ${STATUS_BORDER[order.status]}`}>
+
+      {/* Card header */}
       <div className="flex items-center justify-between px-4 py-3 bg-[#141414] border-b border-[#2a2a2a]">
         <span className="font-script text-lg text-chalk-yellow">{order.id}</span>
         <span className="text-xs text-[#555]">{date} · {time}</span>
-        <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded ${badge.className}`}>{badge.label}</span>
+        <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded ${badge.className}`}>
+          {badge.label}
+        </span>
       </div>
+
+      {/* Card body */}
       <div className="p-4">
         <div className="text-paper font-semibold mb-0.5">{order.name}</div>
-        <div className="text-[#888] text-sm mb-2">
-          📱 {order.wa ? '0' + order.wa.slice(2) : 'No number'}{order.email ? ` · ${order.email}` : ''}
+        <div className="text-[#888] text-sm mb-3">
+          📱 {order.wa ? '0' + order.wa.slice(2) : 'No number'}
+          {order.email ? ` · ${order.email}` : ''}
         </div>
-        <span className="inline-block text-[10px] font-semibold uppercase tracking-wide px-2 py-1 rounded mb-2 border" style={{ background: 'rgba(200,168,117,0.1)', color: 'var(--kraft)', borderColor: 'rgba(200,168,117,0.2)' }}>
+
+        <span
+          className="inline-block text-[10px] font-semibold uppercase tracking-wide px-2 py-1 rounded mb-3 border"
+          style={{
+            background: 'rgba(200,168,117,0.1)',
+            color: 'var(--kraft)',
+            borderColor: 'rgba(200,168,117,0.2)',
+          }}
+        >
           {TYPE_LABELS[order.order_type]}
         </span>
+
         <div className="text-sm text-[#bbb] bg-[#111] border border-[#222] rounded p-3 mb-2 leading-relaxed">
           {order.order_details}
         </div>
-        {order.notes && <div className="text-sm text-[#666] italic mb-2">📝 {order.notes}</div>}
-        {order.processed_by && <div className="text-xs text-green-400 mb-2">✓ Processed by {order.processed_by}</div>}
-        <div className="text-xs text-[#888] mb-3">
-          Customer wants: <span className="text-chalk-yellow font-semibold">{REPLY_LABELS[order.reply_pref]}</span>
-        </div>
 
-        <div className="flex gap-2 flex-wrap">
-          {order.wa && (
-            <a href={buildReplyWhatsAppUrl(order)} target="_blank" rel="noopener noreferrer"
-              className="flex-1 text-center text-xs font-semibold py-2 rounded border border-[#1a4a2a] text-[#25D366] hover:bg-[#1a4a2a] transition-colors">
-              💬 Reply
-            </a>
+        {order.notes && (
+          <div className="text-sm text-[#666] italic mb-2">📝 {order.notes}</div>
+        )}
+        {order.processed_by && (
+          <div className="text-xs text-green-400 mb-3">✓ Handled by {order.processed_by}</div>
+        )}
+
+        {/* Action buttons */}
+        <div className="flex flex-col gap-2 mt-2">
+
+          {/* STEP 1: Order Received — only on new orders, disappears after sent */}
+          {order.status === 'new' && (
+            receivedSent ? (
+              <div className="text-center text-xs py-2 rounded border border-[#222] text-[#555]">
+                ✓ Customer notified — order received
+              </div>
+            ) : (
+              <button
+                onClick={onReceived}
+                className="w-full text-xs font-semibold py-2.5 rounded border border-[#4a3a00] text-amber-400 hover:bg-[#2a2000] transition-colors"
+              >
+                📨 Order Received — Notify Customer
+              </button>
+            )
           )}
-          {order.status !== 'progress' && order.status !== 'done' && (
-            <button onClick={onStart} className="flex-1 text-xs font-semibold py-2 rounded border border-[#4a3a00] text-amber-400 hover:bg-[#2a2000] transition-colors">
-              ▶ Start
-            </button>
+
+          {/* STEP 2: Ready for Collection — only on in-progress orders, disappears after sent */}
+          {order.status === 'progress' && (
+            readySent ? (
+              <div className="text-center text-xs py-2 rounded border border-[#222] text-[#555]">
+                ✓ Customer notified — ready for collection
+              </div>
+            ) : (
+              <button
+                onClick={onReady}
+                className="w-full text-xs font-semibold py-2.5 rounded border border-[#0a3a1a] text-green-400 hover:bg-[#0a2a10] transition-colors"
+              >
+                ✅ Ready for Collection — Notify Customer
+              </button>
+            )
           )}
-          {order.status !== 'done' ? (
-            <button onClick={onComplete} className="flex-1 text-xs font-semibold py-2 rounded border border-[#0a3a1a] text-green-400 hover:bg-[#0a2a10] transition-colors">
-              ✓ Done
-            </button>
-          ) : order.wa ? (
-            <a href={buildNotifyWhatsAppUrl(order)} target="_blank" rel="noopener noreferrer"
-              className="flex-1 text-center text-xs font-semibold py-2 rounded border border-[#1a4a2a] text-[#25D366] hover:bg-[#1a4a2a] transition-colors">
-              📲 Notify
-            </a>
-          ) : null}
-          <button onClick={onDelete} className="text-xs font-semibold py-2 px-3 rounded border border-[#3a0a0a] text-red-400 hover:bg-[#2a0505] transition-colors">
-            ✕
+
+          {/* Completed state — no actions needed */}
+          {order.status === 'done' && (
+            <div className="text-center text-xs py-2 rounded border border-[#222] text-green-500/60">
+              ✓ Order complete — customer has been notified
+            </div>
+          )}
+
+          {/* Delete — always visible */}
+          <button
+            onClick={onDelete}
+            className="w-full text-xs font-semibold py-2 rounded border border-[#3a0a0a] text-red-400 hover:bg-[#2a0505] transition-colors"
+          >
+            Remove Order
           </button>
         </div>
       </div>

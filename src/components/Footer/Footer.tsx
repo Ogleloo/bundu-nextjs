@@ -18,9 +18,10 @@ export default function Footer() {
         <div className="flex flex-col gap-2 text-sm">
           <h4 className="font-display text-lg mb-1 text-chalk-yellow">Order</h4>
           <Link href="/orders" className="hover:text-chalk-yellow transition-colors">Place an Order</Link>
+          <Link href="/catering" className="hover:text-chalk-yellow transition-colors">Catering</Link>
+          <Link href="/events" className="hover:text-chalk-yellow transition-colors">Events</Link>
           <a href="https://wa.me/27737155505" target="_blank" rel="noopener noreferrer" className="hover:text-chalk-yellow transition-colors">WhatsApp</a>
           <a href="tel:+27640746461" className="hover:text-chalk-yellow transition-colors">Call</a>
-          <a href="https://bundu-menu-no30.glide.page" target="_blank" rel="noopener noreferrer" className="hover:text-chalk-yellow transition-colors">Full Menu App</a>
         </div>
 
         <div className="flex flex-col gap-2 text-sm">

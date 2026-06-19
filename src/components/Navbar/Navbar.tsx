@@ -45,8 +45,8 @@ export default function Navbar() {
       {/* Desktop links */}
       <ul className="hidden md:flex items-center gap-6 text-paper text-sm font-medium">
         <li><Link href="/menu" className="hover:text-chalk-yellow transition-colors">Menu</Link></li>
-        <li><Link href="/#catering" className="hover:text-chalk-yellow transition-colors">Catering</Link></li>
-        <li><Link href="/#events" className="hover:text-chalk-yellow transition-colors">Events</Link></li>
+        <li><Link href="/catering" className="hover:text-chalk-yellow transition-colors">Catering</Link></li>
+        <li><Link href="/events" className="hover:text-chalk-yellow transition-colors">Events</Link></li>
         <li><Link href="/#visit" className="hover:text-chalk-yellow transition-colors">Visit</Link></li>
       </ul>
 
@@ -125,8 +125,8 @@ export default function Navbar() {
       {mobileOpen && (
         <div className="absolute top-full left-0 right-0 bg-chalk border-b-2 border-kraft flex flex-col md:hidden">
           <Link href="/menu" onClick={() => setMobileOpen(false)} className="px-6 py-3 text-paper border-t border-white/10">Menu</Link>
-          <Link href="/#catering" onClick={() => setMobileOpen(false)} className="px-6 py-3 text-paper border-t border-white/10">Catering</Link>
-          <Link href="/#events" onClick={() => setMobileOpen(false)} className="px-6 py-3 text-paper border-t border-white/10">Events</Link>
+          <Link href="/catering" onClick={() => setMobileOpen(false)} className="px-6 py-3 text-paper border-t border-white/10">Catering</Link>
+          <Link href="/events" onClick={() => setMobileOpen(false)} className="px-6 py-3 text-paper border-t border-white/10">Events</Link>
           <Link href="/#visit" onClick={() => setMobileOpen(false)} className="px-6 py-3 text-paper border-t border-white/10">Visit</Link>
         </div>
       )}
