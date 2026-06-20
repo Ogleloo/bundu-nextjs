@@ -1,17 +1,25 @@
 // ============================================================
-// DASHBOARD PAGE — /dashboard (staff PIN login required)
-// Flow: StaffLogin -> OrderBoard (+ StaffManagement if owner)
-// No Navbar/Footer — this is a separate internal tool
+// DASHBOARD PAGE — /dashboard
+// Completely independent from customer auth.
+// Staff log in with PIN only — no Supabase Auth session needed.
 // ============================================================
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
 import { StaffLogin, OrderBoard, StaffManagement, DashboardHeader } from '@/components/Dashboard';
 import type { StaffMember } from '@/types';
 
 export default function DashboardPage() {
   const [staff, setStaff] = useState<StaffMember | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // Sign out any customer session when dashboard loads
+  // Staff access is PIN-only — completely independent
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.signOut();
+  }, []);
 
   const handleRefresh = useCallback(() => {
     setRefreshKey(k => k + 1);
@@ -22,7 +30,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f]">
+    <div className="min-h-screen" style={{ backgroundColor: '#0f0f0f' }}>
       <DashboardHeader staff={staff} onRefresh={handleRefresh} />
       <OrderBoard key={refreshKey} staff={staff} />
       {staff.role === 'owner' && <StaffManagement />}
