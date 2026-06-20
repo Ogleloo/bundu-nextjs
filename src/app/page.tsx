@@ -1,5 +1,3 @@
-Output
-
 // ============================================================
 // HOME PAGE — / (public)
 // Assembles: Navbar, Hero, Menu preview, Story, Catering/Events,
