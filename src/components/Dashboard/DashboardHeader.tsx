@@ -1,35 +1,70 @@
-// ============================================================
-// DASHBOARD HEADER — top bar inside the staff dashboard
-// ============================================================
 import Link from 'next/link';
 import type { StaffMember } from '@/types';
 
 interface DashboardHeaderProps {
   staff: StaffMember;
   onRefresh: () => void;
+  onLogout: () => void;
 }
 
-export default function DashboardHeader({ staff, onRefresh }: DashboardHeaderProps) {
+export default function DashboardHeader({ staff, onRefresh, onLogout }: DashboardHeaderProps) {
+  const btnStyle = {
+    backgroundColor: 'transparent',
+    border: '1px solid rgba(255,255,255,0.12)',
+    color: 'rgba(255,255,255,0.6)',
+    padding: '0.45rem 0.9rem',
+    borderRadius: '6px',
+    fontSize: '0.75rem',
+    fontWeight: 600,
+    letterSpacing: '0.5px',
+    textTransform: 'uppercase' as const,
+    cursor: 'pointer',
+    fontFamily: 'var(--font-body)',
+    transition: 'all 0.2s',
+  };
+
   return (
-    <div className="bg-chalk border-b-2 border-[#2d3a22] px-4 md:px-8 py-4 flex items-center justify-between sticky top-0 z-10">
-      <div className="flex items-center gap-3">
-        <h1 className="font-display text-xl text-paper">
-          Bundu <span className="text-chalk-yellow italic">Foods</span>
-        </h1>
-        <span className="bg-burgundy text-paper text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded">
-          {staff.role === 'owner' ? `Owner — ${staff.name}` : `Staff — ${staff.name}`}
+    <div style={{
+      backgroundColor: '#111',
+      borderBottom: '2px solid var(--fire-red)',
+      padding: '0.9rem 1.5rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      position: 'sticky',
+      top: 0,
+      zIndex: 50,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 900 }}>
+          <span style={{ color: 'var(--fire-red)' }}>Bundu </span>
+          <span style={{ color: 'var(--sun-yellow)' }}>Foods</span>
+        </span>
+        <span style={{
+          backgroundColor: 'var(--fire-red)',
+          color: 'white',
+          fontSize: '0.65rem',
+          fontWeight: 700,
+          letterSpacing: '1px',
+          textTransform: 'uppercase',
+          padding: '0.2rem 0.6rem',
+          borderRadius: '4px',
+        }}>
+          {staff.role === 'owner' ? `Owner` : `Staff`} — {staff.name}
         </span>
       </div>
-      <div className="flex items-center gap-3">
-        <span className="flex items-center gap-1.5 text-xs text-green-400 font-semibold before:content-[''] before:w-2 before:h-2 before:bg-green-400 before:rounded-full before:animate-pulse">
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        {/* Live indicator */}
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.72rem', color: '#4ade80', fontWeight: 600 }}>
+          <span style={{ width: 7, height: 7, backgroundColor: '#4ade80', borderRadius: '50%', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
           Live
         </span>
-        <button onClick={onRefresh} className="border border-[#2d3a22] text-kraft text-xs font-semibold uppercase tracking-wide px-3 py-2 rounded hover:bg-[#2d3a22] hover:text-paper transition-colors">
-          ↻ Refresh
+        <button onClick={onRefresh} style={btnStyle}>↻ Refresh</button>
+        <Link href="/" style={{ ...btnStyle, textDecoration: 'none', display: 'inline-block' }}>← Site</Link>
+        <button onClick={onLogout} style={{ ...btnStyle, borderColor: 'rgba(212,43,43,0.4)', color: '#f87171' }}>
+          Logout
         </button>
-        <Link href="/" className="border border-[#333] text-[#888] text-xs font-semibold uppercase tracking-wide px-3 py-2 rounded hover:text-paper hover:border-[#666] transition-colors">
-          ← Site
-        </Link>
       </div>
     </div>
   );

@@ -1,50 +1,27 @@
-// ============================================================
-// CATERING & EVENTS — home page promo section
-// Buttons link to dedicated pages /catering and /events
-// ============================================================
 import Link from 'next/link';
 
 export default function CateringEventsSection() {
   return (
-    <section className="px-4 md:px-8 py-16" style={{ backgroundColor: 'var(--paper-dark)' }}>
-      <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
-
-        <div id="catering" className="bg-white border border-kraft rounded-md p-6">
-          <p className="font-script text-2xl mb-1" style={{ color: 'var(--burgundy)' }}>
-            for your next big day
-          </p>
-          <h2 className="font-display text-2xl mb-3" style={{ color: 'var(--ink)' }}>Catering</h2>
-          <p className="text-sm leading-relaxed mb-5" style={{ color: 'var(--ink-soft)' }}>
-            From small office lunches to full event catering — let us handle
-            the food so you can focus on everything else.
-          </p>
-          <Link
-            href="/catering"
-            className="inline-block px-5 py-2.5 rounded text-sm font-semibold uppercase tracking-wide transition-colors"
-            style={{ backgroundColor: 'var(--moss)', color: 'var(--paper)' }}
-          >
-            Enquire About Catering
-          </Link>
+    <section style={{ backgroundColor: 'var(--charcoal)', padding: '5rem 1.5rem' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center' }}>
+        <div style={{ fontFamily: 'var(--font-script)', fontSize: '1.5rem', color: 'var(--sun-yellow)', marginBottom: '0.5rem' }}>
+          more than just food
         </div>
-
-        <div id="events" className="bg-white border border-kraft rounded-md p-6">
-          <p className="font-script text-2xl mb-1" style={{ color: 'var(--burgundy)' }}>
-            good food, good vibes
-          </p>
-          <h2 className="font-display text-2xl mb-3" style={{ color: 'var(--ink)' }}>Events</h2>
-          <p className="text-sm leading-relaxed mb-5" style={{ color: 'var(--ink-soft)' }}>
-            Looking for a venue for a student event, birthday, or get-together?
-            Bundu Foods has the space and the menu to make it happen.
-          </p>
-          <Link
-            href="/events"
-            className="inline-block px-5 py-2.5 rounded text-sm font-semibold uppercase tracking-wide transition-colors"
-            style={{ backgroundColor: 'var(--moss)', color: 'var(--paper)' }}
-          >
-            Book an Event
-          </Link>
-        </div>
-
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 900, color: 'white', lineHeight: 1.1, marginBottom: '1rem' }}>
+          Upcoming Events<br />
+          <span style={{ color: 'var(--fire-red)' }}>at Bundu</span>
+        </h2>
+        <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.6)', maxWidth: 500, margin: '0 auto 2.5rem', lineHeight: 1.7 }}>
+          Bashes, live artists, student nights and more. Bundu Foods is where the energy is — stay tuned for what&apos;s coming next.
+        </p>
+        <Link href="/events" style={{
+          backgroundColor: 'var(--fire-red)', color: 'white',
+          padding: '1rem 2.5rem', borderRadius: '8px', textDecoration: 'none',
+          fontWeight: 700, fontSize: '1rem', display: 'inline-block',
+          boxShadow: '0 4px 20px rgba(212,43,43,0.4)',
+        }}>
+          See Upcoming Events →
+        </Link>
       </div>
     </section>
   );

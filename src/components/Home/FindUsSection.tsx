@@ -1,49 +1,47 @@
-// ============================================================
-// FIND US — address, hours, map
-// Address verified: Khandisa Reserve, 1 Old Main Road, KwaDlangezwa
-// Edit this file to: update hours or address if the location changes
-// ============================================================
 export default function FindUsSection() {
   return (
-    <section id="visit" className="px-4 md:px-8 py-16 max-w-4xl mx-auto">
-      <p className="font-script text-2xl text-burgundy text-center mb-1">come say hi</p>
-      <h2 className="font-display text-3xl text-center mb-8">Find Us</h2>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-white border border-kraft rounded-md p-6 flex flex-col gap-4">
-          <div>
-            <h3 className="font-display text-lg mb-1">📍 Address</h3>
-            <a
-              href="https://maps.google.com/?q=Khandisa+Reserve,+1+Old+Main+Road,+KwaDlangezwa,+Empangeni,+3886"
-              target="_blank" rel="noopener noreferrer"
-              className="text-sm text-ink-soft hover:text-burgundy underline"
-            >
-              Khandisa Reserve, 1 Old Main Road, KwaDlangezwa, Empangeni, 3886
-            </a>
+    <section id="visit" style={{ padding: '5rem 1.5rem', backgroundColor: 'var(--cream)' }}>
+      <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <div style={{ fontFamily: 'var(--font-script)', fontSize: '1.4rem', color: 'var(--fire-red)', marginBottom: '0.5rem' }}>
+            come say hi
           </div>
-          <div>
-            <h3 className="font-display text-lg mb-1">⏱ Hours</h3>
-            <p className="text-sm text-ink-soft">Open daily from 7AM</p>
-          </div>
-          <div>
-            <h3 className="font-display text-lg mb-1">📞 Contact</h3>
-            <p className="text-sm text-ink-soft">
-              <a href="tel:+27640746461" className="hover:text-burgundy underline">064 074 6461</a>
-              {' · '}
-              <a href="https://wa.me/27737155505" target="_blank" rel="noopener noreferrer" className="hover:text-burgundy underline">WhatsApp</a>
-            </p>
-          </div>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 900, color: 'var(--charcoal)' }}>
+            Find Us
+          </h2>
         </div>
 
-        <div className="rounded-md overflow-hidden border border-kraft min-h-[280px]">
-          <iframe
-            title="Bundu Foods location"
-            src="https://maps.google.com/maps?q=Khandisa+Reserve,+1+Old+Main+Road,+KwaDlangezwa,+Empangeni,+3886&output=embed"
-            width="100%"
-            height="100%"
-            style={{ border: 0, minHeight: 280 }}
-            loading="lazy"
-          />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+          <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '2rem', boxShadow: '0 4px 20px rgba(0,0,0,0.06)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {[
+              { icon: '📍', label: 'Address', value: 'Khandisa Reserve, 1 Old Main Road, KwaDlangezwa, Empangeni, 3886', href: 'https://maps.google.com/?q=Khandisa+Reserve,+1+Old+Main+Road,+KwaDlangezwa,+Empangeni,+3886' },
+              { icon: '⏱', label: 'Hours', value: 'Open daily from 7AM', href: null },
+              { icon: '📞', label: 'Contact', value: '064 074 6461', href: 'tel:+27640746461' },
+            ].map(item => (
+              <div key={item.label}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 700, color: 'var(--charcoal)', marginBottom: '0.3rem' }}>
+                  {item.icon} {item.label}
+                </div>
+                {item.href ? (
+                  <a href={item.href} style={{ fontSize: '0.875rem', color: 'var(--fire-red)', textDecoration: 'none' }}>
+                    {item.value}
+                  </a>
+                ) : (
+                  <p style={{ fontSize: '0.875rem', color: 'var(--ash)' }}>{item.value}</p>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border)', minHeight: 280 }}>
+            <iframe
+              title="Bundu Foods location"
+              src="https://maps.google.com/maps?q=Khandisa+Reserve,+1+Old+Main+Road,+KwaDlangezwa,+Empangeni,+3886&output=embed"
+              width="100%" height="100%"
+              style={{ border: 0, minHeight: 280, display: 'block' }}
+              loading="lazy"
+            />
+          </div>
         </div>
       </div>
     </section>
