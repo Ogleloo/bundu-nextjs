@@ -1,57 +1,41 @@
-/* ============================================================
-   GLOBAL DESIGN TOKENS — Bundu Foods
-   Ported from the original single-file site.
-   Edit colours/fonts here — they cascade everywhere via Tailwind
-   utilities (see tailwind.config) and CSS variables below.
-============================================================ */
 @import "tailwindcss";
 
+/* ============================================================
+   BUNDU FOODS — DESIGN TOKENS
+   Pulled directly from the Bundu Foods logo:
+   fire red, flame orange, tree green, sun yellow
+============================================================ */
 :root {
-  /* Fonts */
+  /* Brand colours */
+  --fire-red:      #D42B2B;
+  --fire-red-deep: #A81F1F;
+  --flame-orange:  #E8570A;
+  --tree-green:    #1B6B2F;
+  --tree-green-deep: #144D22;
+  --sun-yellow:    #F5C200;
+  --charcoal:      #1A1A1A;
+  --charcoal-soft: #2C2C2C;
+  --ash:           #5A5A5A;
+  --cream:         #FFFDF7;
+  --warm-white:    #FFFFFF;
+  --warm-gray:     #F5F3EE;
+  --border:        #E8E4DC;
+
+  /* Typography */
   --font-display: 'Playfair Display', serif;
-  --font-script: 'Caveat', cursive;
-  --font-body: 'Inter', sans-serif;
-
-  /* Colours — kraft paper / chalkboard palette */
-  --paper: #f4eddc;
-  --paper-dark: #e8dcc0;
-  --kraft: #c8a875;
-  --burgundy: #8a2c20;
-  --burgundy-deep: #5e1d14;
-  --moss: #4a5c3a;
-  --moss-deep: #2d3a22;
-  --chalk-bg: #1a2620;
-  --chalk-yellow: #f4c542;
-  --ink: #2a2118;
-  --ink-soft: #5c4d3c;
+  --font-script:  'Caveat', cursive;
+  --font-body:    'Inter', sans-serif;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-body);
-  background: var(--paper);
-  color: var(--ink);
+  background-color: var(--cream);
+  color: var(--charcoal);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Utility classes that map to the design tokens for use in components */
 .font-display { font-family: var(--font-display); }
-.font-script { font-family: var(--font-script); }
-.bg-paper { background-color: var(--paper); }
-.bg-paper-dark { background-color: var(--paper-dark); }
-.bg-burgundy { background-color: var(--burgundy); }
-.bg-burgundy-deep { background-color: var(--burgundy-deep); }
-.bg-moss { background-color: var(--moss); }
-.bg-chalk { background-color: var(--chalk-bg); }
-.text-burgundy { color: var(--burgundy); }
-.text-moss { color: var(--moss); }
-.text-chalk-yellow { color: var(--chalk-yellow); }
-.text-ink { color: var(--ink); }
-.text-ink-soft { color: var(--ink-soft); }
-.border-kraft { border-color: var(--kraft); }
+.font-script  { font-family: var(--font-script); }

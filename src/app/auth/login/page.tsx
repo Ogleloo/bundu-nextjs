@@ -1,7 +1,3 @@
-// ============================================================
-// LOGIN PAGE — /auth/login
-// Split: Customer login (left) | Staff access (right)
-// ============================================================
 'use client';
 
 import { useState } from 'react';
@@ -14,13 +10,10 @@ import PasswordInput from '@/components/UI/PasswordInput';
 export default function LoginPage() {
   const router = useRouter();
   const { refresh } = useAuth();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-
-  // Forgot password
   const [showForgot, setShowForgot] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotMsg, setForgotMsg] = useState('');
@@ -28,8 +21,7 @@ export default function LoginPage() {
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
-    setSubmitting(true);
+    setError(''); setSubmitting(true);
     const result = await logIn(email, password);
     setSubmitting(false);
     if (!result.success) { setError(result.error || 'Login failed.'); return; }
@@ -45,171 +37,115 @@ export default function LoginPage() {
     setForgotMsg('Check your email for a password reset link.');
   }
 
+  const inputStyle = {
+    width: '100%', padding: '0.85rem 1rem',
+    border: '2px solid var(--border)', borderRadius: '8px',
+    fontSize: '0.95rem', fontFamily: 'var(--font-body)',
+    color: 'var(--charcoal)', backgroundColor: 'white',
+    outline: 'none', transition: 'border-color 0.2s',
+  };
+
   return (
     <>
-      <div className="min-h-screen flex flex-col md:flex-row">
-
-        {/* LEFT — Customer Login */}
-        <div className="flex-1 flex flex-col justify-center px-8 py-12 md:px-16"
-          style={{ backgroundColor: 'var(--chalk-bg)' }}>
-          <div className="max-w-sm w-full mx-auto">
-            <Link href="/" className="block mb-8">
-              <span className="font-display text-2xl" style={{ color: 'var(--paper)' }}>
-                Bundu <span style={{ color: 'var(--chalk-yellow)', fontStyle: 'italic' }}>Foods</span>
-              </span>
+      <div style={{
+        minHeight: '100vh', display: 'flex', alignItems: 'center',
+        justifyContent: 'center', padding: '2rem 1rem',
+        backgroundColor: 'var(--cream)',
+      }}>
+        <div style={{ width: '100%', maxWidth: 420 }}>
+          {/* Brand */}
+          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <Link href="/" style={{ textDecoration: 'none' }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 900 }}>
+                <span style={{ color: 'var(--fire-red)' }}>Bundu </span>
+                <span style={{ color: 'var(--tree-green)' }}>Foods</span>
+              </div>
             </Link>
+            <div style={{ fontFamily: 'var(--font-script)', fontSize: '1.2rem', color: 'var(--ash)', marginTop: 4 }}>
+              welcome back
+            </div>
+          </div>
 
-            <h1 className="font-display text-3xl mb-1" style={{ color: 'var(--paper)' }}>
-              Welcome back
+          {/* Card */}
+          <div style={{
+            backgroundColor: 'white', borderRadius: '16px', padding: '2rem',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.08)',
+            border: '1px solid var(--border)',
+          }}>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.25rem', color: 'var(--charcoal)' }}>
+              Customer Login
             </h1>
-            <p className="text-sm mb-8" style={{ color: 'rgba(244,237,220,0.6)' }}>
-              Log in to place an order or track your orders.
+            <p style={{ fontSize: '0.85rem', color: 'var(--ash)', marginBottom: '1.5rem' }}>
+              Log in to order or track your food.
             </p>
 
             {error && (
-              <div className="bg-red-900/30 border border-red-500/40 text-red-300 text-sm px-3 py-2 rounded mb-4">
+              <div style={{ backgroundColor: '#fff5f5', border: '1px solid #fca5a5', color: 'var(--fire-red)', fontSize: '0.85rem', padding: '0.75rem 1rem', borderRadius: '8px', marginBottom: '1rem' }}>
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide mb-1"
-                  style={{ color: 'rgba(244,237,220,0.5)' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--ash)', marginBottom: '0.4rem' }}>
                   Email Address
                 </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="w-full px-3 py-2.5 rounded text-sm outline-none"
-                  style={{
-                    backgroundColor: 'rgba(255,255,255,0.07)',
-                    border: '1px solid rgba(255,255,255,0.12)',
-                    color: 'var(--paper)',
-                  }}
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                  placeholder="you@example.com" style={inputStyle}
+                  onFocus={e => (e.currentTarget.style.borderColor = 'var(--fire-red)')}
+                  onBlur={e => (e.currentTarget.style.borderColor = 'var(--border)')}
                 />
               </div>
-
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide mb-1"
-                  style={{ color: 'rgba(244,237,220,0.5)' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--ash)', marginBottom: '0.4rem' }}>
                   Password
                 </label>
-                <PasswordInput
-                  value={password}
-                  onChange={setPassword}
-                  placeholder="Your password"
-                />
+                <PasswordInput value={password} onChange={setPassword} placeholder="Your password" />
               </div>
-
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full py-3 rounded text-sm font-semibold uppercase tracking-wide transition-opacity disabled:opacity-60"
-                style={{ backgroundColor: 'var(--burgundy)', color: 'var(--paper)' }}
-              >
-                {submitting ? 'Logging in...' : 'Login'}
+              <button type="submit" disabled={submitting} style={{
+                backgroundColor: 'var(--fire-red)', color: 'white', border: 'none',
+                borderRadius: '8px', padding: '1rem', fontSize: '1rem', fontWeight: 700,
+                fontFamily: 'var(--font-body)', cursor: 'pointer', marginTop: '0.5rem',
+                opacity: submitting ? 0.7 : 1, transition: 'opacity 0.2s, transform 0.1s',
+              }}>
+                {submitting ? 'Logging in...' : 'Login →'}
               </button>
             </form>
 
-            <div className="mt-4 flex flex-col gap-2 text-center">
-              <button
-                onClick={() => setShowForgot(true)}
-                className="text-xs underline"
-                style={{ color: 'rgba(244,237,220,0.4)' }}
-              >
+            <div style={{ marginTop: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', textAlign: 'center' }}>
+              <button onClick={() => setShowForgot(true)} style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                fontSize: '0.82rem', color: 'var(--ash)', textDecoration: 'underline',
+                fontFamily: 'var(--font-body)',
+              }}>
                 Forgot your password?
               </button>
-              <p className="text-xs" style={{ color: 'rgba(244,237,220,0.4)' }}>
-                Don&apos;t have an account?{' '}
-                <Link href="/auth/signup" className="underline font-semibold"
-                  style={{ color: 'var(--chalk-yellow)' }}>
-                  Sign up
+              <p style={{ fontSize: '0.82rem', color: 'var(--ash)' }}>
+                New here?{' '}
+                <Link href="/auth/signup" style={{ color: 'var(--fire-red)', fontWeight: 700, textDecoration: 'none' }}>
+                  Create an account
                 </Link>
               </p>
             </div>
-          </div>
-        </div>
-
-        {/* DIVIDER */}
-        <div className="hidden md:flex items-center justify-center w-px"
-          style={{ backgroundColor: 'rgba(200,168,117,0.2)' }}>
-          <span className="font-script text-2xl px-4 py-2 rounded-full"
-            style={{
-              color: 'var(--chalk-yellow)',
-              backgroundColor: 'var(--chalk-bg)',
-              border: '1px solid rgba(200,168,117,0.3)',
-            }}>
-            or
-          </span>
-        </div>
-
-        {/* RIGHT — Staff Access */}
-        <div className="flex-1 flex flex-col justify-center px-8 py-12 md:px-16"
-          style={{ backgroundColor: 'var(--burgundy)' }}>
-          <div className="max-w-sm w-full mx-auto text-center">
-            <div className="text-6xl mb-6">👥</div>
-            <h2 className="font-display text-3xl mb-2" style={{ color: 'var(--paper)' }}>
-              Staff Access
-            </h2>
-            <p className="text-sm mb-8" style={{ color: 'rgba(244,237,220,0.7)' }}>
-              Are you a Bundu Foods team member? Access the staff dashboard to manage orders.
-            </p>
-            <Link
-              href="/dashboard"
-              className="inline-block w-full py-3 rounded text-sm font-semibold uppercase tracking-wide transition-colors"
-              style={{
-                backgroundColor: 'var(--chalk-yellow)',
-                color: 'var(--ink)',
-              }}
-            >
-              Go to Staff Dashboard
-            </Link>
-            <p className="text-xs mt-4" style={{ color: 'rgba(244,237,220,0.4)' }}>
-              You&apos;ll need your staff PIN to enter
-            </p>
           </div>
         </div>
       </div>
 
       {/* Forgot password modal */}
       {showForgot && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-          <div className="bg-paper border border-kraft rounded-md max-w-sm w-full p-6 shadow-2xl">
-            <h3 className="font-display text-xl mb-1" style={{ color: 'var(--ink)' }}>Reset Password</h3>
-            <p className="text-sm mb-4" style={{ color: 'var(--ink-soft)' }}>
-              Enter your email and we&apos;ll send you a reset link.
-            </p>
-            {forgotError && (
-              <div className="bg-red-50 border border-red-300 text-red-600 text-sm px-3 py-2 rounded mb-3">{forgotError}</div>
-            )}
-            {forgotMsg && (
-              <div className="bg-green-50 border border-green-300 text-green-700 text-sm px-3 py-2 rounded mb-3">{forgotMsg}</div>
-            )}
-            <form onSubmit={handleForgot} className="space-y-3">
-              <input
-                type="email"
-                value={forgotEmail}
-                onChange={e => setForgotEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="w-full px-3 py-2.5 border border-paper-dark rounded text-sm bg-white outline-none focus:border-burgundy"
-              />
-              <div className="flex gap-2">
-                <button
-                  type="submit"
-                  className="flex-1 py-2.5 rounded text-sm font-semibold uppercase tracking-wide"
-                  style={{ backgroundColor: 'var(--burgundy)', color: 'var(--paper)' }}
-                >
-                  Send Reset Link
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+          <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '2rem', width: '100%', maxWidth: 380, boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}>
+            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', marginBottom: '0.5rem' }}>Reset Password</h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--ash)', marginBottom: '1rem' }}>We&apos;ll send a reset link to your email.</p>
+            {forgotError && <div style={{ backgroundColor: '#fff5f5', border: '1px solid #fca5a5', color: 'var(--fire-red)', fontSize: '0.82rem', padding: '0.6rem', borderRadius: '6px', marginBottom: '0.75rem' }}>{forgotError}</div>}
+            {forgotMsg && <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #86efac', color: 'var(--tree-green)', fontSize: '0.82rem', padding: '0.6rem', borderRadius: '6px', marginBottom: '0.75rem' }}>{forgotMsg}</div>}
+            <form onSubmit={handleForgot} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <input type="email" value={forgotEmail} onChange={e => setForgotEmail(e.target.value)} placeholder="you@example.com" style={inputStyle} />
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button type="submit" style={{ flex: 1, backgroundColor: 'var(--fire-red)', color: 'white', border: 'none', borderRadius: '8px', padding: '0.75rem', fontSize: '0.875rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+                  Send Link
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setShowForgot(false)}
-                  className="px-4 py-2.5 rounded text-sm border"
-                  style={{ borderColor: 'var(--kraft)', color: 'var(--ink-soft)' }}
-                >
+                <button type="button" onClick={() => setShowForgot(false)} style={{ padding: '0.75rem 1rem', borderRadius: '8px', border: '2px solid var(--border)', backgroundColor: 'white', cursor: 'pointer', fontSize: '0.875rem', color: 'var(--ash)', fontFamily: 'var(--font-body)' }}>
                   Cancel
                 </button>
               </div>
