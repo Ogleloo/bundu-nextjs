@@ -1,8 +1,3 @@
-// ============================================================
-// NAVBAR — main site navigation
-// Shows: logo, links, WhatsApp/Call buttons, Login or Profile dropdown
-// Edit this file to: change nav links, add new nav items
-// ============================================================
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -18,7 +13,6 @@ export default function Navbar() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
@@ -37,97 +31,258 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-chalk sticky top-0 z-50 flex items-center justify-between px-4 md:px-8 py-3 border-b-2 border-kraft">
-      <Link href="/" className="font-display text-xl text-paper">
-        Bundu <span className="text-chalk-yellow italic">Foods</span>
-      </Link>
+    <nav style={{
+      backgroundColor: 'var(--warm-white)',
+      borderBottom: '3px solid var(--fire-red)',
+      position: 'sticky',
+      top: 0,
+      zIndex: 50,
+    }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 1.5rem' }}
+        className="flex items-center justify-between h-16">
 
-      {/* Desktop links */}
-      <ul className="hidden md:flex items-center gap-6 text-paper text-sm font-medium">
-        <li><Link href="/menu" className="hover:text-chalk-yellow transition-colors">Menu</Link></li>
-        <li><Link href="/catering" className="hover:text-chalk-yellow transition-colors">Catering</Link></li>
-        <li><Link href="/events" className="hover:text-chalk-yellow transition-colors">Events</Link></li>
-        <li><Link href="/#visit" className="hover:text-chalk-yellow transition-colors">Visit</Link></li>
-      </ul>
+        {/* Brand */}
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <span style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '1.5rem',
+            fontWeight: 900,
+            color: 'var(--fire-red)',
+            letterSpacing: '-0.5px',
+          }}>
+            Bundu <span style={{ color: 'var(--tree-green)' }}>Foods</span>
+          </span>
+        </Link>
 
-      <div className="flex items-center gap-2">
-        <a
-          href="https://wa.me/27737155505?text=Hi%20Bundu%2C%20I%27d%20like%20to%20place%20an%20order."
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hidden sm:inline-flex items-center gap-1 bg-moss text-paper text-xs font-semibold px-3 py-2 rounded-sm hover:bg-moss-deep transition-colors"
-          style={{ backgroundColor: 'var(--moss)' }}
-        >
-          WhatsApp →
-        </a>
-        <a
-          href="tel:+27640746461"
-          className="hidden sm:inline-flex items-center gap-1 bg-moss text-paper text-xs font-semibold px-3 py-2 rounded-sm hover:bg-moss-deep transition-colors"
-          style={{ backgroundColor: 'var(--moss)' }}
-        >
-          📞 Call
-        </a>
-
-        {/* Profile or Login */}
-        {profile ? (
-          <div className="relative" ref={wrapRef}>
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="w-9 h-9 rounded-full font-display text-xs font-bold flex items-center justify-center border-2 border-kraft transition-transform hover:scale-105"
-              style={{ backgroundColor: 'var(--burgundy)', color: 'var(--paper)' }}
+        {/* Desktop links */}
+        <div className="hidden md:flex items-center gap-8">
+          {[
+            { href: '/menu', label: 'Menu' },
+            { href: '/events', label: 'Events' },
+            { href: '/#visit', label: 'Visit' },
+          ].map(link => (
+            <Link key={link.href} href={link.href} style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              color: 'var(--charcoal)',
+              textDecoration: 'none',
+              letterSpacing: '0.3px',
+              transition: 'color 0.2s',
+            }}
+              onMouseEnter={e => (e.currentTarget.style.color = 'var(--fire-red)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'var(--charcoal)')}
             >
-              {getInitials(profile.name)}
-            </button>
+              {link.label}
+            </Link>
+          ))}
 
-            {dropdownOpen && (
-              <div className="absolute top-full right-0 mt-2 w-48 bg-paper border border-kraft rounded shadow-xl overflow-hidden z-50">
-                <div className="px-4 py-3 border-b border-kraft bg-paper-dark">
-                  <div className="font-display text-sm font-bold text-ink">{profile.name}</div>
-                  <div className="text-xs text-ink-soft truncate">{profile.email}</div>
-                </div>
-                <Link href="/orders/history" onClick={() => setDropdownOpen(false)} className="block px-4 py-2.5 text-sm hover:bg-paper-dark hover:text-burgundy transition-colors">
-                  📦 My Orders
-                </Link>
-                <Link href="/profile" onClick={() => setDropdownOpen(false)} className="block px-4 py-2.5 text-sm hover:bg-paper-dark hover:text-burgundy transition-colors">
-                  👤 My Details
-                </Link>
-                <Link href="/profile?tab=password" onClick={() => setDropdownOpen(false)} className="block px-4 py-2.5 text-sm hover:bg-paper-dark hover:text-burgundy transition-colors">
-                  🔑 Change Password
-                </Link>
-                <div className="h-px bg-kraft" />
-                <button onClick={handleLogout} className="block w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
-                  ↩ Logout
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <Link
-            href="/auth/login"
-            className="inline-flex items-center gap-1 text-paper text-xs font-semibold px-3 py-2 rounded-sm transition-colors"
-            style={{ backgroundColor: 'var(--moss)' }}
+          <Link href="/orders" style={{
+            backgroundColor: 'var(--fire-red)',
+            color: 'white',
+            padding: '0.6rem 1.4rem',
+            borderRadius: '6px',
+            fontWeight: 700,
+            fontSize: '0.875rem',
+            textDecoration: 'none',
+            letterSpacing: '0.5px',
+            transition: 'background-color 0.2s, transform 0.1s',
+            display: 'inline-block',
+          }}
+            onMouseEnter={e => {
+              e.currentTarget.style.backgroundColor = 'var(--fire-red-deep)';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.backgroundColor = 'var(--fire-red)';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
           >
-            Login
+            Order Now
           </Link>
-        )}
+        </div>
 
-        {/* Mobile menu toggle */}
-        <button
-          className="md:hidden text-paper text-2xl px-1"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
-        >
-          ☰
-        </button>
+        {/* Right side */}
+        <div className="flex items-center gap-3">
+          {profile ? (
+            <div className="relative" ref={wrapRef}>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                style={{
+                  width: 40, height: 40,
+                  borderRadius: '50%',
+                  backgroundColor: 'var(--tree-green)',
+                  color: 'white',
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  border: '2px solid var(--tree-green-deep)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'transform 0.2s',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.08)')}
+                onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+              >
+                {getInitials(profile.name)}
+              </button>
+
+              {dropdownOpen && (
+                <div style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 10px)',
+                  right: 0,
+                  backgroundColor: 'white',
+                  border: '1px solid var(--border)',
+                  borderRadius: '10px',
+                  width: 200,
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                  overflow: 'hidden',
+                  zIndex: 100,
+                }}>
+                  <div style={{
+                    padding: '0.9rem 1rem',
+                    borderBottom: '1px solid var(--border)',
+                    backgroundColor: 'var(--warm-gray)',
+                  }}>
+                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.9rem', color: 'var(--charcoal)' }}>
+                      {profile.name}
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--ash)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {profile.email}
+                    </div>
+                  </div>
+                  {[
+                    { href: '/orders', label: '🍳 Place an Order' },
+                    { href: '/orders/history', label: '📦 My Orders' },
+                    { href: '/profile', label: '👤 My Details' },
+                    { href: '/profile?tab=password', label: '🔑 Change Password' },
+                  ].map(item => (
+                    <Link key={item.href} href={item.href}
+                      onClick={() => setDropdownOpen(false)}
+                      style={{
+                        display: 'block',
+                        padding: '0.7rem 1rem',
+                        fontSize: '0.82rem',
+                        color: 'var(--charcoal)',
+                        textDecoration: 'none',
+                        transition: 'background 0.15s',
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--warm-gray)')}
+                      onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                  <div style={{ height: 1, backgroundColor: 'var(--border)' }} />
+                  <button onClick={handleLogout} style={{
+                    display: 'block',
+                    width: '100%',
+                    textAlign: 'left',
+                    padding: '0.7rem 1rem',
+                    fontSize: '0.82rem',
+                    color: 'var(--fire-red)',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontFamily: 'var(--font-body)',
+                    transition: 'background 0.15s',
+                  }}
+                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#fff5f5')}
+                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+                  >
+                    ↩ Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link href="/auth/login" style={{
+              backgroundColor: 'transparent',
+              color: 'var(--tree-green)',
+              padding: '0.55rem 1.1rem',
+              borderRadius: '6px',
+              fontWeight: 600,
+              fontSize: '0.875rem',
+              textDecoration: 'none',
+              border: '2px solid var(--tree-green)',
+              transition: 'all 0.2s',
+            }}
+              onMouseEnter={e => {
+                e.currentTarget.style.backgroundColor = 'var(--tree-green)';
+                e.currentTarget.style.color = 'white';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = 'var(--tree-green)';
+              }}
+            >
+              Login
+            </Link>
+          )}
+
+          {/* Mobile toggle */}
+          <button
+            className="md:hidden"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            style={{
+              backgroundColor: 'transparent',
+              border: 'none',
+              fontSize: '1.5rem',
+              cursor: 'pointer',
+              color: 'var(--charcoal)',
+              padding: '0.25rem',
+            }}
+          >
+            {mobileOpen ? '✕' : '☰'}
+          </button>
+        </div>
       </div>
 
-      {/* Mobile dropdown links */}
+      {/* Mobile menu */}
       {mobileOpen && (
-        <div className="absolute top-full left-0 right-0 bg-chalk border-b-2 border-kraft flex flex-col md:hidden">
-          <Link href="/menu" onClick={() => setMobileOpen(false)} className="px-6 py-3 text-paper border-t border-white/10">Menu</Link>
-          <Link href="/catering" onClick={() => setMobileOpen(false)} className="px-6 py-3 text-paper border-t border-white/10">Catering</Link>
-          <Link href="/events" onClick={() => setMobileOpen(false)} className="px-6 py-3 text-paper border-t border-white/10">Events</Link>
-          <Link href="/#visit" onClick={() => setMobileOpen(false)} className="px-6 py-3 text-paper border-t border-white/10">Visit</Link>
+        <div style={{
+          borderTop: '1px solid var(--border)',
+          backgroundColor: 'white',
+          padding: '1rem 1.5rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.25rem',
+        }}>
+          {[
+            { href: '/menu', label: 'Menu' },
+            { href: '/events', label: 'Events' },
+            { href: '/#visit', label: 'Visit' },
+          ].map(link => (
+            <Link key={link.href} href={link.href}
+              onClick={() => setMobileOpen(false)}
+              style={{
+                padding: '0.75rem 0',
+                fontSize: '1rem',
+                fontWeight: 600,
+                color: 'var(--charcoal)',
+                textDecoration: 'none',
+                borderBottom: '1px solid var(--border)',
+              }}>
+              {link.label}
+            </Link>
+          ))}
+          <Link href="/orders" onClick={() => setMobileOpen(false)} style={{
+            marginTop: '0.75rem',
+            backgroundColor: 'var(--fire-red)',
+            color: 'white',
+            padding: '0.9rem',
+            borderRadius: '8px',
+            textAlign: 'center',
+            fontWeight: 700,
+            fontSize: '1rem',
+            textDecoration: 'none',
+            display: 'block',
+          }}>
+            🍳 Order Now
+          </Link>
         </div>
       )}
     </nav>
