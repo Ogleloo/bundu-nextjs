@@ -25,9 +25,11 @@ export async function getEvents(): Promise<BunduEvent[]> {
 
   if (error) {
     console.warn('[EventsService] getEvents failed:', error);
-    return [];
+    // Surface the failure so the page can tell "no events scheduled"
+    // apart from "couldn't load events".
+    throw new Error(error.message);
   }
-  return data as BunduEvent[];
+  return (data ?? []) as BunduEvent[];
 }
 
 /** Get all customer WhatsApp numbers for event notifications */

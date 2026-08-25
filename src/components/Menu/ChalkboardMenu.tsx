@@ -1,7 +1,8 @@
 // ============================================================
 // CHALKBOARD MENU — tabbed menu display
-// Fetches items via menuService. Falls back to placeholder
-// items if the menu_items table is empty (owner hasn't added menu yet).
+// Fetches items via menuService. Three outcomes are handled
+// separately: still loading, load failed, and loaded-but-empty
+// (owner hasn't added the menu yet — placeholders shown).
 // Edit menu items in Supabase Table Editor -> menu_items,
 // or build an admin form later in src/app/dashboard.
 // ============================================================
@@ -9,6 +10,7 @@
 
 import { useState, useEffect } from 'react';
 import { getMenuItems, groupByCategory } from '@/services/menuService';
+import ConnectionError from '@/components/UI/ConnectionError';
 import type { MenuItem } from '@/types';
 
 const PLACEHOLDER_ITEMS: MenuItem[] = [
@@ -23,28 +25,74 @@ const PLACEHOLDER_ITEMS: MenuItem[] = [
 export default function ChalkboardMenu() {
   const [items, setItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
   const [usingPlaceholders, setUsingPlaceholders] = useState(false);
   const [activeTab, setActiveTab] = useState<string>('');
 
+  // Bumped by the retry button to re-run the fetch below
+  const [attempt, setAttempt] = useState(0);
+
   useEffect(() => {
-    (async () => {
-      const data = await getMenuItems();
-      if (data.length === 0) {
-        setItems(PLACEHOLDER_ITEMS);
-        setUsingPlaceholders(true);
-        setActiveTab(PLACEHOLDER_ITEMS[0].category);
-      } else {
-        setItems(data);
-        setActiveTab(data[0].category);
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const data = await getMenuItems();
+        if (cancelled) return;
+
+        if (data.length === 0) {
+          // Reached Supabase fine, the menu just isn't captured yet
+          setItems(PLACEHOLDER_ITEMS);
+          setUsingPlaceholders(true);
+          setActiveTab(PLACEHOLDER_ITEMS[0].category);
+        } else {
+          setItems(data);
+          setUsingPlaceholders(false);
+          setActiveTab(data[0].category);
+        }
+      } catch (err) {
+        console.warn('[ChalkboardMenu] menu load failed:', err);
+        if (!cancelled) {
+          setItems([]);
+          setUsingPlaceholders(false);
+          setFailed(true);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      setLoading(false);
-    })();
-  }, []);
+    }
+    load();
+
+    return () => { cancelled = true; };
+  }, [attempt]);
+
+  function retry() {
+    setLoading(true);
+    setFailed(false);
+    setAttempt(a => a + 1);
+  }
 
   if (loading) {
     return (
-      <section className="bg-chalk text-paper px-4 md:px-8 py-16 text-center">
+      <section id="menu" className="bg-chalk text-paper px-4 md:px-8 py-16 text-center">
         <p className="font-script text-xl text-chalk-yellow">loading the menu...</p>
+      </section>
+    );
+  }
+
+  // Couldn't reach the menu — don't pass sample prices off as the real menu
+  if (failed) {
+    return (
+      <section id="menu" className="bg-chalk text-paper px-4 md:px-8 py-16">
+        <div className="max-w-3xl mx-auto">
+          <p className="font-script text-2xl text-chalk-yellow text-center mb-1">what&apos;s cooking</p>
+          <h2 className="font-display text-3xl md:text-4xl text-center">Our Menu</h2>
+          <ConnectionError
+            tone="dark"
+            message="We couldn't load the menu right now. Message us on WhatsApp and we'll send it through and take your order."
+            onRetry={retry}
+          />
+        </div>
       </section>
     );
   }

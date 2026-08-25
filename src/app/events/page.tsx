@@ -10,18 +10,43 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { getEvents, type BunduEvent } from '@/services/eventsService';
 import FloatingButtons from '@/components/UI/FloatingButtons';
+import ConnectionError from '@/components/UI/ConnectionError';
 
 export default function EventsPage() {
   const [events, setEvents] = useState<BunduEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+
+  // Bumped by the retry button to re-run the fetch below
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    (async () => {
-      const data = await getEvents();
-      setEvents(data);
-      setLoading(false);
-    })();
-  }, []);
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const data = await getEvents();
+        if (!cancelled) setEvents(data);
+      } catch (err) {
+        console.warn('[EventsPage] events load failed:', err);
+        if (!cancelled) {
+          setEvents([]);
+          setFailed(true);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+
+    return () => { cancelled = true; };
+  }, [attempt]);
+
+  function retry() {
+    setLoading(true);
+    setFailed(false);
+    setAttempt(a => a + 1);
+  }
 
   return (
     <>
@@ -50,11 +75,16 @@ export default function EventsPage() {
                 loading events...
               </p>
             </div>
+          ) : failed ? (
+            <ConnectionError
+              message="We couldn't load the events list right now. Message us on WhatsApp and we'll tell you what's coming up."
+              onRetry={retry}
+            />
           ) : events.length === 0 ? (
             <div className="text-center py-16">
               <div className="text-5xl mb-4">🎵</div>
               <h2 className="font-display text-2xl mb-2" style={{ color: 'var(--ink)' }}>
-                No events yet
+                No events coming up right now
               </h2>
               <p className="text-sm" style={{ color: 'var(--ink-soft)' }}>
                 Check back soon — something is always cooking at Bundu.

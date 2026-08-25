@@ -18,9 +18,12 @@ export async function getMenuItems(): Promise<MenuItem[]> {
 
   if (error) {
     console.warn('[MenuService] getMenuItems failed:', error);
-    return [];
+    // Surface the failure. Returning [] here hid the difference between
+    // "the menu is empty" and "we couldn't reach the menu", which left
+    // the UI showing a sample menu when Supabase was down.
+    throw new Error(error.message);
   }
-  return data as MenuItem[];
+  return (data ?? []) as MenuItem[];
 }
 
 /** Group flat menu items by category for tabbed display */
