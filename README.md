@@ -101,7 +101,7 @@ Set these in `.env.local` (never commit this file):
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://jkjzvgtkmjoutxpcvxoa.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_...
-NEXT_PUBLIC_OWNER_PIN=9999
+NEXT_PUBLIC_OWNER_PIN=your-pin-here
 ```
 
 When deploying to Vercel/Netlify, add these same variables in the
