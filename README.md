@@ -101,7 +101,7 @@ Set these in `.env.local` (never commit this file):
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://jkjzvgtkmjoutxpcvxoa.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_...
-NEXT_PUBLIC_OWNER_PIN=9999
+NEXT_PUBLIC_OWNER_PIN=your-pin-here
 ```
 
 When deploying to Vercel/Netlify, add these same variables in the
@@ -117,7 +117,7 @@ Schema already applied via `supabase/schema.sql`. Tables:
 |---|---|
 | `profiles` | Customer name + WhatsApp (auto-created on signup via trigger) |
 | `orders` | All orders, realtime-enabled for live dashboard |
-| `staff` | PIN-based staff accounts (Owner=9999, Staff 1=2025) |
+| `staff` | PIN-based staff accounts (PINs live only in this table) |
 | `menu_items` | Menu - currently empty, falls back to placeholder items |
 
 ### Adding the real menu
@@ -144,10 +144,8 @@ Forgot password -> Supabase sends a reset email -> `/auth/reset-password`
 
 Go to `/dashboard` (also linked as "staff" in the footer, low-opacity).
 
-| Role | Name | PIN |
-|---|---|---|
-| Owner | Owner | 9999 |
-| Staff | Staff 1 | 2025 |
+PINs are not documented here — they live only in the Supabase `staff`
+table. Look them up (or set them) in Supabase -> Table Editor -> `staff`.
 
 Owner sees an extra Staff Management panel at the bottom:
 add/activate/deactivate/remove staff with their own PINs.

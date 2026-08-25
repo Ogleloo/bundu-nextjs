@@ -93,10 +93,11 @@ create policy "Authenticated users can view staff"
 create policy "Authenticated users can manage staff"
   on staff for all using (auth.role() = 'authenticated');
 
--- Seed default staff (matches old system: Owner/9999, Staff 1/2025)
+-- Seed default staff. PINs are generated randomly, not hardcoded here —
+-- set real PINs in Supabase (Table Editor -> staff) after running this.
 insert into staff (name, pin, role, active) values
-  ('Owner', '9999', 'owner', true),
-  ('Staff 1', '2025', 'staff', true)
+  ('Owner', lpad(floor(random() * 10000)::text, 4, '0'), 'owner', true),
+  ('Staff 1', lpad(floor(random() * 10000)::text, 4, '0'), 'staff', true)
 on conflict (name) do nothing;
 
 

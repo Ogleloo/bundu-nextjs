@@ -96,7 +96,12 @@ export async function logOut(): Promise<void> {
   await supabase.auth.signOut();
 }
 
-/** Get the currently logged-in user's profile, or null */
+/**
+ * Get the currently logged-in user's profile.
+ * Returns null when nobody is signed in (or has no profile row).
+ * Throws when the lookup itself fails, so callers can tell
+ * "signed out" apart from "can't reach Supabase".
+ */
 export async function getCurrentProfile(): Promise<Profile | null> {
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) return null;
@@ -107,7 +112,12 @@ export async function getCurrentProfile(): Promise<Profile | null> {
     .eq('id', userData.user.id)
     .single();
 
-  if (error) return null;
+  if (error) {
+    // PGRST116 = no matching row: a signed-in user without a profile,
+    // not a connection problem — send them through the login flow.
+    if (error.code === 'PGRST116') return null;
+    throw new Error(error.message);
+  }
   return data as Profile;
 }
 
