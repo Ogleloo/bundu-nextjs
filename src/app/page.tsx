@@ -1,13 +1,13 @@
 // ============================================================
 // HOME PAGE — / (public)
-// Assembles: Navbar, Hero, Menu preview, Story, Catering/Events,
+// Assembles: Navbar, Hero, Menu preview, Story, Events,
 // Find Us, Footer. All content components live in src/components.
 // ============================================================
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Hero from '@/components/Hero';
 import { ChalkboardMenu } from '@/components/Menu';
-import { StorySection, CateringEventsSection, FindUsSection } from '@/components/Home';
+import { StorySection, EventsSection, FindUsSection } from '@/components/Home';
 import FloatingButtons from '@/components/UI/FloatingButtons';
 
 export default function HomePage() {
@@ -18,7 +18,7 @@ export default function HomePage() {
         <Hero />
         <ChalkboardMenu />
         <StorySection />
-        <CateringEventsSection />
+        <EventsSection />
         <FindUsSection />
       </main>
       <Footer />

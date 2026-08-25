@@ -7,8 +7,8 @@ import type { Metadata } from "next";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "Bundu Foods — Restaurant, Lounge & Catering · KwaDlangezwa",
-  description: "Bundu Foods — Restaurant, lounge, catering & student events on the UNIZULU main road. Order on WhatsApp or call us.",
+  title: "Bundu Foods — Restaurant & Lounge, KwaDlangezwa",
+  description: "Traditional meals, wings, burgers and platters near UniZulu. Order on your phone, collect at the counter.",
 };
 
 export default function RootLayout({

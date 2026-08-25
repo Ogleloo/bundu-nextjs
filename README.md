@@ -34,7 +34,7 @@ src/
 │   ├── Footer/           ← Footer + hidden staff link
 │   ├── Hero/             ← Homepage hero
 │   ├── Menu/             ← ChalkboardMenu (reads menu_items table)
-│   ├── Home/             ← Story, Catering/Events, Find Us sections
+│   ├── Home/             ← Story, Events, Find Us sections
 │   ├── Auth/             ← Login/Signup forms, Profile details, Change password
 │   ├── Orders/           ← Order form, order history, contact buttons
 │   ├── Dashboard/        ← Staff login, order board, staff management
