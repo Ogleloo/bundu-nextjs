@@ -97,15 +97,15 @@ export default function StaffLoginPage() {
       alignItems: 'center',
       justifyContent: 'center',
       padding: '2rem 1rem',
-      background: 'linear-gradient(135deg, #1A1A1A 0%, #2C1810 100%)',
+      background: 'linear-gradient(135deg, var(--charcoal) 0%, #2C1810 100%)',
     }}>
       <div style={{ width: '100%', maxWidth: 420 }}>
 
         {/* Brand */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '2.2rem', fontWeight: 900 }}>
-            <span style={{ color: '#D42B2B' }}>Bundu </span>
-            <span style={{ color: '#F5C200' }}>Foods</span>
+            <span style={{ color: 'var(--fire-red)' }}>Bundu </span>
+            <span style={{ color: 'var(--sun-yellow)' }}>Foods</span>
           </div>
           <div style={{ fontFamily: 'Caveat, cursive', fontSize: '1.3rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.25rem' }}>
             staff portal
@@ -179,9 +179,9 @@ export default function StaffLoginPage() {
                     style={{
                       padding: '0.9rem 0.75rem',
                       borderRadius: '12px',
-                      border: `2px solid ${selectedName === s.name ? '#D42B2B' : 'rgba(255,255,255,0.1)'}`,
+                      border: `2px solid ${selectedName === s.name ? 'var(--fire-red)' : 'rgba(255,255,255,0.1)'}`,
                       backgroundColor: selectedName === s.name ? 'rgba(212,43,43,0.15)' : 'rgba(255,255,255,0.04)',
-                      color: selectedName === s.name ? '#D42B2B' : 'rgba(255,255,255,0.7)',
+                      color: selectedName === s.name ? 'var(--fire-red)' : 'rgba(255,255,255,0.7)',
                       fontFamily: 'Inter, sans-serif',
                       fontSize: '0.9rem',
                       fontWeight: 600,
@@ -216,7 +216,7 @@ export default function StaffLoginPage() {
                     letterSpacing: '8px',
                     outline: 'none',
                   }}
-                  onFocus={e => (e.currentTarget.style.borderColor = '#D42B2B')}
+                  onFocus={e => (e.currentTarget.style.borderColor = 'var(--fire-red)')}
                   onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)')}
                 />
 
@@ -230,7 +230,7 @@ export default function StaffLoginPage() {
                   type="submit"
                   disabled={submitting || !selectedName || !pin}
                   style={{
-                    backgroundColor: '#D42B2B',
+                    backgroundColor: 'var(--fire-red)',
                     color: 'white',
                     border: 'none',
                     borderRadius: '12px',
