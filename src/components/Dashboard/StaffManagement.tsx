@@ -7,17 +7,18 @@
 import { useState, useEffect } from 'react';
 import { getAllStaff, addStaffMember, toggleStaffActive, removeStaffMember, resetStaffPin } from '@/services/staffService';
 import { getAllCustomerWhatsApps } from '@/services/eventsService';
-import type { StaffMember } from '@/types';
+import type { StaffSummary } from '@/types';
 
 export default function StaffManagement() {
-  const [staffList, setStaffList] = useState<StaffMember[]>([]);
+  const [staffList, setStaffList] = useState<StaffSummary[]>([]);
   const [newName, setNewName] = useState('');
   const [newPin, setNewPin] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
   // A PIN just set by addStaffMember or resetStaffPin — shown once, then
-  // never again. Stored PINs are never displayed once this clears.
+  // never again. The staff table's actual pin column is never sent to
+  // this component at all (see StaffSummary) other than this one moment.
   const [revealedPin, setRevealedPin] = useState<{ name: string; pin: string } | null>(null);
 
   // Event notification
@@ -50,7 +51,7 @@ export default function StaffManagement() {
     load();
   }
 
-  async function handleResetPin(s: StaffMember) {
+  async function handleResetPin(s: StaffSummary) {
     if (!confirm(`Reset ${s.name}'s PIN? The old one stops working immediately.`)) return;
     setError('');
     const result = await resetStaffPin(s.id);
@@ -59,12 +60,12 @@ export default function StaffManagement() {
     load();
   }
 
-  async function handleToggle(s: StaffMember) {
+  async function handleToggle(s: StaffSummary) {
     await toggleStaffActive(s.id, !s.active);
     load();
   }
 
-  async function handleRemove(s: StaffMember) {
+  async function handleRemove(s: StaffSummary) {
     if (!confirm(`Remove ${s.name} from staff?`)) return;
     await removeStaffMember(s.id);
     load();

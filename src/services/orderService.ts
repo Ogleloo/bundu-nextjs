@@ -2,6 +2,14 @@
 // ORDER SERVICE — submit orders, fetch order history, dashboard ops
 // Used by src/components/Orders, src/components/Dashboard,
 // src/app/orders/*, src/app/dashboard/*
+//
+// KNOWN, LOGGED, NOT FIXED HERE: supabase/fix-staff-rls.sql opened
+// the orders table's update/delete policies to "using (true)" for
+// any role, including anon. The public anon key is in every
+// browser, so anyone can update or delete any order via a direct
+// REST API call, no login required — the same shape of exposure
+// as the staff table had before it moved server-side. Flagged per
+// instruction, not addressed as part of the staff-auth-server work.
 // ============================================================
 import { createClient } from '@/lib/supabase/client';
 import type { Order, OrderType, OrderStatus, Profile } from '@/types';

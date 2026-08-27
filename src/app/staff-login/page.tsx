@@ -4,21 +4,25 @@
 // Independent from customer auth. PIN only.
 // Staff select their name → enter PIN → go to /dashboard
 //
-// Staff and PINs live in Supabase only. Never hardcode a PIN
-// here — this file ships to the browser.
+// Staff and PINs live in Supabase only, and are only ever read
+// or verified server-side (see src/app/api/staff/*). This page
+// never queries the staff table directly — it calls staffService,
+// which calls those routes. On successful login the server sets
+// an httpOnly signed session cookie; this page just redirects.
 // ============================================================
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import type { StaffMember } from '@/types';
+import { getActiveStaff, staffLogin } from '@/services/staffService';
+import type { StaffSummary } from '@/types';
 
 const UNREACHABLE = "Can't reach the staff list. Check your connection and reload.";
 const NO_STAFF = 'No active staff accounts found. Ask the owner to add one.';
 
 export default function StaffLoginPage() {
   const router = useRouter();
-  const [staffList, setStaffList] = useState<StaffMember[]>([]);
+  const [staffList, setStaffList] = useState<StaffSummary[]>([]);
   const [selectedName, setSelectedName] = useState<string | null>(null);
   const [pin, setPin] = useState('');
   const [error, setError] = useState('');
@@ -29,23 +33,19 @@ export default function StaffLoginPage() {
   useEffect(() => {
     async function load() {
       try {
-        // Sign out any customer session — staff login is independent
+        // Sign out any customer session — staff login is independent.
+        // This is customer-auth hygiene only, unrelated to staff PINs.
         const supabase = createClient();
         await supabase.auth.signOut();
 
-        const { data, error } = await supabase
-          .from('staff')
-          .select('*')
-          .eq('active', true)
-          .order('role', { ascending: false });
-
-        if (error) {
-          setLoadError(UNREACHABLE);
-        } else if (!data || data.length === 0) {
-          // Reached the database fine, there is just nobody active
+        const data = await getActiveStaff();
+        if (data.length === 0) {
+          // Could mean the fetch failed or genuinely no active staff —
+          // either way there's nothing to show, so give the honest,
+          // actionable version of that message.
           setLoadError(NO_STAFF);
         } else {
-          setStaffList(data as StaffMember[]);
+          setStaffList(data);
         }
       } catch {
         setLoadError(UNREACHABLE);
@@ -64,30 +64,16 @@ export default function StaffLoginPage() {
     setSubmitting(true);
     setError('');
 
-    try {
-      // Verify PIN against the staff table — the only source of truth
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from('staff')
-        .select('*')
-        .eq('name', selectedName)
-        .eq('pin', pin)
-        .eq('active', true)
-        .single();
-
-      if (error || !data) {
-        setError('Incorrect PIN. Try again.');
-        setPin('');
-        setSubmitting(false);
-        return;
-      }
-
-      sessionStorage.setItem('bundu-staff', JSON.stringify(data));
-      router.push('/dashboard');
-    } catch {
-      setError('Something went wrong. Try again.');
+    const result = await staffLogin(selectedName, pin);
+    if (!result.success) {
+      setError(result.error || 'Incorrect PIN. Try again.');
+      setPin('');
       setSubmitting(false);
+      return;
     }
+
+    // Session cookie is already set by the server. Nothing to store client-side.
+    router.push('/dashboard');
   }
 
   return (

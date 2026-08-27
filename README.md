@@ -101,7 +101,11 @@ Set these in `.env.local` (never commit this file):
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://jkjzvgtkmjoutxpcvxoa.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_...
-NEXT_PUBLIC_OWNER_PIN=your-pin-here
+
+# Server-only. Never NEXT_PUBLIC_ — that ships to the browser.
+# Used by src/app/api/staff/* to verify PINs and sign session cookies.
+SUPABASE_SERVICE_ROLE_KEY=...
+STAFF_SESSION_SECRET=...
 ```
 
 When deploying to Vercel/Netlify, add these same variables in the

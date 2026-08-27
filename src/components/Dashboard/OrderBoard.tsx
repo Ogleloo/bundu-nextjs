@@ -16,10 +16,10 @@ import {
   buildReplyWhatsAppUrl,
   subscribeToOrders,
 } from '@/services/orderService';
-import type { Order, OrderStatus, OrderType, StaffMember } from '@/types';
+import type { Order, OrderStatus, OrderType, StaffSummary } from '@/types';
 
 interface OrderBoardProps {
-  staff: StaffMember;
+  staff: StaffSummary;
 }
 
 type FilterType = 'all' | OrderStatus | OrderType;
