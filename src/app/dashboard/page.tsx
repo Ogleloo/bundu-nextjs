@@ -1,41 +1,41 @@
 // ============================================================
 // DASHBOARD PAGE — /dashboard
-// Reads staff session from sessionStorage set by /staff-login
-// If no session found, redirects to /staff-login
+// Session lives in an httpOnly signed cookie set by
+// POST /api/staff/login, verified here via GET /api/staff/me.
+// Not readable or forgeable from the browser — replaces the old
+// sessionStorage check, which anyone could set by hand in devtools.
+// If there's no valid session, redirect to /staff-login.
 // ============================================================
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { OrderBoard, StaffManagement, DashboardHeader } from '@/components/Dashboard';
-import type { StaffMember } from '@/types';
+import { getCurrentStaff, staffLogout } from '@/services/staffService';
+import type { StaffSummary } from '@/types';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [staff, setStaff] = useState<StaffMember | null>(null);
+  const [staff, setStaff] = useState<StaffSummary | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    // Check for staff session set by /staff-login
-    const stored = sessionStorage.getItem('bundu-staff');
-    if (!stored) {
-      router.replace('/staff-login');
-      return;
-    }
-    try {
-      setStaff(JSON.parse(stored));
-    } catch {
-      router.replace('/staff-login');
-      return;
-    }
-    setChecking(false);
+    (async () => {
+      const current = await getCurrentStaff();
+      if (!current) {
+        router.replace('/staff-login');
+        return;
+      }
+      setStaff(current);
+      setChecking(false);
+    })();
   }, [router]);
 
   const handleRefresh = useCallback(() => setRefreshKey(k => k + 1), []);
 
-  function handleLogout() {
-    sessionStorage.removeItem('bundu-staff');
+  async function handleLogout() {
+    await staffLogout();
     router.replace('/staff-login');
   }
 

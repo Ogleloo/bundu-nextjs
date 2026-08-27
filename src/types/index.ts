@@ -40,6 +40,8 @@ export interface Order {
 
 /**
  * Staff member — stored in Supabase `staff` table.
+ * Only used server-side (src/app/api/staff/*), where the pin
+ * column is actually read. Never sent to the client as-is.
  */
 export interface StaffMember {
   id: string;
@@ -49,6 +51,14 @@ export interface StaffMember {
   active: boolean;
   created_at: string;
 }
+
+/**
+ * Staff member as the client ever sees it — no pin field, so
+ * client code has nothing to display or leak even by accident.
+ * Returned by every /api/staff/* route and used throughout
+ * src/components/Dashboard.
+ */
+export type StaffSummary = Omit<StaffMember, 'pin'>;
 
 /**
  * Menu item — stored in Supabase `menu_items` table.

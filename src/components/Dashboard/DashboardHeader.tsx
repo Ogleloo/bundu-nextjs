@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import type { StaffMember } from '@/types';
+import type { StaffSummary } from '@/types';
 
 interface DashboardHeaderProps {
-  staff: StaffMember;
+  staff: StaffSummary;
   onRefresh: () => void;
   onLogout: () => void;
 }

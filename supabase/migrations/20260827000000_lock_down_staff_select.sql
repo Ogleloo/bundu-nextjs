@@ -1,0 +1,32 @@
+-- ============================================================
+-- LOCK DOWN STAFF TABLE READS
+-- Run in: Supabase Dashboard -> SQL Editor -> New Query
+--
+-- Staff authentication has moved server-side (see src/app/api/staff/*
+-- and src/lib/supabase/admin.ts). Every legitimate read of the staff
+-- table -- the /staff-login name list, the owner's management panel --
+-- now goes through a server route using the service role key, which
+-- bypasses RLS entirely regardless of these policies.
+--
+-- The existing "Anyone can view active staff" policy (added in
+-- fix-staff-rls.sql) therefore no longer serves the purpose it was
+-- added for, and it is actively harmful: the anon key is public --
+-- shipped to every browser -- so this policy lets anyone query the
+-- staff table directly via the REST API and read every PIN in
+-- plaintext, completely independent of what the app's own code does.
+--
+-- This migration only removes access. It grants nothing new, and it
+-- does not touch the insert/update/delete policies (those already
+-- require auth.role() = 'authenticated', which the staff PIN-login
+-- flow never establishes -- they're unreachable dead weight now that
+-- writes go through the service role, but they aren't a hole, so
+-- left alone here).
+-- ============================================================
+
+drop policy if exists "Anyone can view active staff" on staff;
+
+-- No replacement select policy is added for anon or authenticated.
+-- With RLS enabled and no permissive select policy, the default is
+-- deny: a direct REST API read of staff now returns zero rows for
+-- both roles. Only the service role (server-side only, via
+-- src/lib/supabase/admin.ts) can still read this table.
