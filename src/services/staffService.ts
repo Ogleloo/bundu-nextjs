@@ -80,6 +80,21 @@ export async function addStaffMember(name: string, pin: string): Promise<{ succe
   return { success: true };
 }
 
+export interface ResetPinResult {
+  success: boolean;
+  pin?: string;
+  error?: string;
+}
+
+/** Owner: reset a staff member's PIN to a new random 4-digit value */
+export async function resetStaffPin(id: string): Promise<ResetPinResult> {
+  const newPin = Math.floor(1000 + Math.random() * 9000).toString();
+
+  const { error } = await supabase.from('staff').update({ pin: newPin }).eq('id', id);
+  if (error) return { success: false, error: error.message };
+  return { success: true, pin: newPin };
+}
+
 /** Owner: toggle a staff member's active status */
 export async function toggleStaffActive(id: string, active: boolean): Promise<{ success: boolean; error?: string }> {
   const { error } = await supabase.from('staff').update({ active }).eq('id', id);
