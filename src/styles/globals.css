@@ -27,6 +27,36 @@
   --font-body:    'Inter', sans-serif;
 }
 
+/* ============================================================
+   DASHBOARD ALIASES
+   StaffManagement.tsx and Dashboard/StaffLogin.tsx reference
+   --chalk, --paper, --paper-dark, --kraft, --chalk-yellow,
+   --burgundy and --moss via var() and Tailwind classes, but none
+   of these were ever defined anywhere in the codebase. That was
+   a bug, not a second theme — those elements were rendering with
+   no color, falling back to inherited/initial values. Aliased
+   onto the real tokens here rather than renamed in the
+   components, to keep that diff untouched.
+   Defined in @theme (not plain :root) so both the existing
+   var(--x) calls and Tailwind utilities like bg-chalk resolve.
+============================================================ */
+@theme {
+  --color-chalk:        var(--charcoal);
+  --chalk:              var(--charcoal);
+  --color-paper:        var(--cream);
+  --paper:              var(--cream);
+  --color-paper-dark:   var(--warm-gray);
+  --paper-dark:         var(--warm-gray);
+  --color-kraft:        var(--border);
+  --kraft:              var(--border);
+  --color-chalk-yellow: var(--sun-yellow);
+  --chalk-yellow:       var(--sun-yellow);
+  --color-burgundy:     var(--fire-red-deep);
+  --burgundy:           var(--fire-red-deep);
+  --color-moss:         var(--tree-green);
+  --moss:               var(--tree-green);
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
