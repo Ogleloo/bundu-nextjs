@@ -1,6 +1,6 @@
 // ============================================================
 // ORDER FORM — Dine In and Takeaway only
-// Catering → /catering | Events → /events
+// Events → /events
 // ============================================================
 'use client';
 
@@ -12,7 +12,7 @@ interface OrderFormProps {
   profile: Profile;
 }
 
-// Only dine-in and takeaway — catering/events have their own pages
+// Only dine-in and takeaway — events has its own page
 const ORDER_TYPES: { value: OrderType; label: string; desc: string }[] = [
   { value: 'dine-in', label: '🍽 Dine In', desc: 'Eat at Bundu Foods' },
   { value: 'takeaway', label: '📦 Takeaway', desc: 'Collect your order' },
@@ -162,11 +162,9 @@ export default function OrderForm({ profile }: OrderFormProps) {
           {submitting ? 'Sending...' : '✓ Send My Order'}
         </button>
 
-        {/* Links to catering/events */}
+        {/* Link to events */}
         <div className="pt-2 border-t text-center text-xs" style={{ borderColor: 'var(--paper-dark)', color: 'var(--ink-soft)' }}>
-          Need catering or want to book an event?{' '}
-          <a href="/catering" className="underline font-semibold" style={{ color: 'var(--burgundy)' }}>Catering enquiry</a>
-          {' · '}
+          Want to book an event?{' '}
           <a href="/events" className="underline font-semibold" style={{ color: 'var(--burgundy)' }}>Book an event</a>
         </div>
       </form>

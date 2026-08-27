@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export default function CateringEventsSection() {
+export default function EventsSection() {
   return (
     <section style={{ backgroundColor: 'var(--charcoal)', padding: '5rem 1.5rem' }}>
       <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center' }}>

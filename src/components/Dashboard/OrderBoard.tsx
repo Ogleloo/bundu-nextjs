@@ -50,7 +50,6 @@ const FILTERS: { value: FilterType; label: string }[] = [
   { value: 'done', label: '🟢 Done' },
   { value: 'dine-in', label: 'Dine In' },
   { value: 'takeaway', label: 'Takeaway' },
-  { value: 'catering', label: 'Catering' },
 ];
 
 export default function OrderBoard({ staff }: OrderBoardProps) {
