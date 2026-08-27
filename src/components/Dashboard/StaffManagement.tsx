@@ -5,7 +5,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getAllStaff, addStaffMember, toggleStaffActive, removeStaffMember } from '@/services/staffService';
+import { getAllStaff, addStaffMember, toggleStaffActive, removeStaffMember, resetStaffPin } from '@/services/staffService';
 import { getAllCustomerWhatsApps } from '@/services/eventsService';
 import type { StaffMember } from '@/types';
 
@@ -15,6 +15,10 @@ export default function StaffManagement() {
   const [newPin, setNewPin] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+
+  // A PIN just set by addStaffMember or resetStaffPin — shown once, then
+  // never again. Stored PINs are never displayed once this clears.
+  const [revealedPin, setRevealedPin] = useState<{ name: string; pin: string } | null>(null);
 
   // Event notification
   const [eventMsg, setEventMsg] = useState('');
@@ -37,9 +41,21 @@ export default function StaffManagement() {
 
   async function handleAdd() {
     setError('');
+    const trimmedName = newName.trim();
+    const trimmedPin = newPin.trim();
     const result = await addStaffMember(newName, newPin);
     if (!result.success) { setError(result.error || 'Could not add staff member.'); return; }
+    setRevealedPin({ name: trimmedName, pin: trimmedPin });
     setNewName(''); setNewPin('');
+    load();
+  }
+
+  async function handleResetPin(s: StaffMember) {
+    if (!confirm(`Reset ${s.name}'s PIN? The old one stops working immediately.`)) return;
+    setError('');
+    const result = await resetStaffPin(s.id);
+    if (!result.success) { setError(result.error || 'Could not reset PIN.'); return; }
+    setRevealedPin({ name: s.name, pin: result.pin! });
     load();
   }
 
@@ -84,6 +100,31 @@ export default function StaffManagement() {
   return (
     <div style={{ backgroundColor: '#0d0d0d', borderTop: '1px solid #1a1a1a' }}
       className="px-4 md:px-8 py-8 space-y-10">
+
+      {/* ---- NEW PIN REVEAL — shown once after add/reset, then gone for good ---- */}
+      {revealedPin && (
+        <div
+          className="rounded px-4 py-3"
+          style={{ border: '1px solid var(--chalk-yellow)', backgroundColor: 'rgba(245,194,0,0.08)' }}
+        >
+          <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--chalk-yellow)' }}>
+            New PIN for {revealedPin.name}
+          </p>
+          <p className="font-script text-3xl mb-2" style={{ color: 'var(--paper)' }}>
+            {revealedPin.pin}
+          </p>
+          <p className="text-xs mb-3" style={{ color: '#f87171' }}>
+            Write this down — it won&apos;t be shown again.
+          </p>
+          <button
+            onClick={() => setRevealedPin(null)}
+            className="px-3 py-1.5 rounded text-xs font-semibold uppercase tracking-wide transition-colors"
+            style={{ backgroundColor: 'var(--chalk-yellow)', color: '#1a1a1a' }}
+          >
+            Got it
+          </button>
+        </div>
+      )}
 
       {/* ---- EVENT NOTIFICATIONS ---- */}
       <div>
@@ -161,7 +202,7 @@ export default function StaffManagement() {
                     {s.role === 'owner' ? '👑 ' : '👤 '}{s.name}
                   </span>
                   <span className="font-script text-base" style={{ color: 'var(--chalk-yellow)' }}>
-                    PIN: {s.pin}
+                    PIN: ●●●●
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
@@ -170,6 +211,11 @@ export default function StaffManagement() {
                   }`}>
                     {s.active ? 'Active' : 'Off'}
                   </span>
+                  <button onClick={() => handleResetPin(s)}
+                    className="text-[11px] px-2 py-1 rounded border transition-colors"
+                    style={{ borderColor: '#333', color: 'var(--chalk-yellow)' }}>
+                    Reset PIN
+                  </button>
                   {s.role !== 'owner' && (
                     <>
                       <button onClick={() => handleToggle(s)}
