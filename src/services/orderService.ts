@@ -25,6 +25,12 @@ export interface SubmitOrderInput {
   orderDetails: string;
   orderType: OrderType;
   notes: string;
+  // Checkout lets a signed-in customer edit the name / number for this
+  // one order without changing their profile. Omitted by other callers
+  // (e.g. the events form), which fall back to the profile values.
+  // `wa`, when given, must already be normalised to 27XXXXXXXXX.
+  name?: string;
+  wa?: string;
   // reply_pref hardcoded to 'whatsapp' — all notifications via WhatsApp
 }
 
@@ -45,8 +51,8 @@ export async function submitOrder(profile: Profile, input: SubmitOrderInput): Pr
   const { error } = await supabase.from('orders').insert({
     id,
     user_id: profile.id,
-    name: profile.name,
-    wa: profile.wa,
+    name: input.name?.trim() || profile.name,
+    wa: input.wa?.trim() || profile.wa,
     email: profile.email,
     order_details: input.orderDetails.trim(),
     order_type: input.orderType,
