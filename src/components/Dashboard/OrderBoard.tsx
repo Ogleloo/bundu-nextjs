@@ -162,7 +162,7 @@ export default function OrderBoard({ staff }: OrderBoardProps) {
             <p className="text-sm">Website orders appear here in real time.</p>
           </div>
         ) : (
-          <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))' }}>
+          <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(320px, 100%), 1fr))' }}>
             {filtered.map(order => (
               <OrderCard
                 key={order.id}

@@ -7,8 +7,15 @@ import type { Metadata } from "next";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://bundu-nextjs.vercel.app"),
   title: "Bundu Foods — Restaurant & Lounge, KwaDlangezwa",
   description: "Traditional meals, wings, burgers and platters near UniZulu. Order on your phone, collect at the counter.",
+  icons: { icon: "/logo/icon-32.png", apple: "/logo/icon-180.png" },
+  openGraph: {
+    images: ["/logo/og-image.jpg"],
+    title: "Bundu Foods",
+    description: "Real food, cooked fresh, five minutes from campus.",
+  },
 };
 
 export default function RootLayout({

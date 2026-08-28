@@ -11,6 +11,7 @@ import Footer from '@/components/Footer';
 import { getEvents, type BunduEvent } from '@/services/eventsService';
 import FloatingButtons from '@/components/UI/FloatingButtons';
 import ConnectionError from '@/components/UI/ConnectionError';
+import LogoLoader from '@/components/UI/LogoLoader';
 
 export default function EventsPage() {
   const [events, setEvents] = useState<BunduEvent[]>([]);
@@ -71,9 +72,7 @@ export default function EventsPage() {
         <div className="px-4 py-12 max-w-4xl mx-auto">
           {loading ? (
             <div className="text-center py-16">
-              <p className="font-script text-2xl" style={{ color: 'var(--ink-soft)' }}>
-                loading events...
-              </p>
+              <LogoLoader label="Loading events" />
             </div>
           ) : failed ? (
             <ConnectionError

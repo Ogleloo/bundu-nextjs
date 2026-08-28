@@ -41,17 +41,16 @@ export default function Navbar() {
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 1.5rem' }}
         className="flex items-center justify-between h-16">
 
-        {/* Brand */}
+        {/* Brand — background is --warm-white, so the dark wordmark */}
         <Link href="/" style={{ textDecoration: 'none' }}>
-          <span style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: '1.5rem',
-            fontWeight: 900,
-            color: 'var(--fire-red)',
-            letterSpacing: '-0.5px',
-          }}>
-            Bundu <span style={{ color: 'var(--tree-green)' }}>Foods</span>
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo/nav-logo.png"
+            srcSet="/logo/nav-logo.png 1x, /logo/nav-logo@2x.png 2x, /logo/nav-logo@3x.png 3x"
+            alt="Bundu Foods"
+            height={28}
+            style={{ display: 'block', height: 28, width: 'auto' }}
+          />
         </Link>
 
         {/* Desktop links */}

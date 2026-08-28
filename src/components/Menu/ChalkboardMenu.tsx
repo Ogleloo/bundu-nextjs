@@ -11,6 +11,7 @@
 import { useState, useEffect } from 'react';
 import { getMenuItems, groupByCategory } from '@/services/menuService';
 import ConnectionError from '@/components/UI/ConnectionError';
+import LogoLoader from '@/components/UI/LogoLoader';
 import type { MenuItem } from '@/types';
 
 const PLACEHOLDER_ITEMS: MenuItem[] = [
@@ -75,7 +76,7 @@ export default function ChalkboardMenu() {
   if (loading) {
     return (
       <section id="menu" className="bg-chalk text-paper px-4 md:px-8 py-16 text-center">
-        <p className="font-script text-xl text-chalk-yellow">loading the menu...</p>
+        <LogoLoader label="Loading the menu" />
       </section>
     );
   }
