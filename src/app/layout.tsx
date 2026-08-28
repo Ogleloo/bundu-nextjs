@@ -5,6 +5,7 @@
 // ============================================================
 import type { Metadata } from "next";
 import "@/styles/globals.css";
+import { CartProvider } from "@/context/CartContext";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://bundu-nextjs.vercel.app"),
@@ -34,7 +35,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col" style={{ fontFamily: 'var(--font-body)' }}>
-        {children}
+        <CartProvider>{children}</CartProvider>
       </body>
     </html>
   );
