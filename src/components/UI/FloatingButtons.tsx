@@ -1,8 +1,21 @@
 // ============================================================
 // FLOATING BUTTONS — fixed WhatsApp + Call buttons (bottom right)
-// Edit phone numbers here if they change
+// Edit phone numbers here if they change.
+//
+// Hidden while the cart has items: the menu's sticky cart bar takes
+// the same bottom-of-screen space and is the more important action
+// mid-order. (This applies on every page, not just /menu — a page
+// with a live cart won't show these until the cart is cleared or
+// the order is placed.)
 // ============================================================
+'use client';
+
+import { useCart } from '@/context/CartContext';
+
 export default function FloatingButtons() {
+  const { itemCount } = useCart();
+  if (itemCount > 0) return null;
+
   return (
     <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-50 safe-bottom">
       <a

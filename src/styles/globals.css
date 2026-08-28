@@ -95,6 +95,16 @@ textarea {
   padding-bottom: calc(16px + env(safe-area-inset-bottom));
 }
 
+/* Horizontal pill/tab rows that scroll sideways on mobile — no
+   visible scrollbar. Content must still be reachable by swipe. */
+.no-scrollbar {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* legacy Edge */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;                /* WebKit */
+}
+
 /* Media never forces the page wider than the screen at 360px. */
 img,
 video {
