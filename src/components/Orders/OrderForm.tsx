@@ -12,11 +12,14 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { submitOrder } from '@/services/orderService';
-import { normaliseWhatsApp } from '@/services/authService';
+import { normaliseWhatsApp, isValidSAWhatsApp } from '@/services/authService';
 import type { OrderType, Profile } from '@/types';
 
 interface OrderFormProps {
-  profile: Profile;
+  // null = guest checkout (not signed in). The name / WhatsApp fields
+  // below are required either way, so a guest order still carries
+  // everything the kitchen needs; it just goes in with user_id null.
+  profile: Profile | null;
 }
 
 // Dine In / Takeaway only — catering and event are no longer offered here
@@ -27,12 +30,6 @@ const ORDER_TYPES: { value: OrderType; label: string; desc: string }[] = [
 
 const DANGER = '#dc2626';
 
-/** Step 3 rule: 10 digits starting 0, or +27 followed by 9 digits. */
-function isPlausibleSAMobile(raw: string): boolean {
-  const s = raw.replace(/[\s-]/g, '');
-  return /^0\d{9}$/.test(s) || /^\+27\d{9}$/.test(s);
-}
-
 function formatRand(n: number): string {
   return `R${(Math.round(n * 100) / 100).toFixed(2)}`;
 }
@@ -40,9 +37,9 @@ function formatRand(n: number): string {
 export default function OrderForm({ profile }: OrderFormProps) {
   const { items, itemCount, totalFormatted, setQty, clear } = useCart();
 
-  const [name, setName] = useState(profile.name);
+  const [name, setName] = useState(profile?.name ?? '');
   // profile.wa is stored as 27XXXXXXXXX — show it back in local 0XXXXXXXXX form
-  const [wa, setWa] = useState(profile.wa ? '0' + profile.wa.slice(2) : '');
+  const [wa, setWa] = useState(profile?.wa ? '0' + profile.wa.slice(2) : '');
   const [orderType, setOrderType] = useState<OrderType>('dine-in');
   const [notes, setNotes] = useState('');
 
@@ -65,8 +62,8 @@ export default function OrderForm({ profile }: OrderFormProps) {
       setNameError('Please enter a name for the order.');
       bad = true;
     }
-    if (!isPlausibleSAMobile(wa)) {
-      setWaError('Enter a valid SA mobile — e.g. 073 123 4567 or +27 73 123 4567.');
+    if (!isValidSAWhatsApp(wa)) {
+      setWaError('Enter a valid SA WhatsApp number, e.g. 073 123 4567.');
       bad = true;
     }
     if (bad) return;

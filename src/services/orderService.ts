@@ -40,8 +40,15 @@ export interface SubmitOrderResult {
   error?: string;
 }
 
-/** Submit a new order for the currently logged-in customer */
-export async function submitOrder(profile: Profile, input: SubmitOrderInput): Promise<SubmitOrderResult> {
+/**
+ * Submit a new order.
+ * profile === null is a guest checkout: the order goes in with
+ * user_id null and identity comes entirely from input.name / input.wa
+ * (the checkout form requires both). Guest inserts also need the DB
+ * side in place — see supabase/migrations/20260828000000_orders_user_id_nullable.sql
+ * and the orders RLS changes — until then a guest submit fails at insert.
+ */
+export async function submitOrder(profile: Profile | null, input: SubmitOrderInput): Promise<SubmitOrderResult> {
   if (!input.orderDetails.trim()) {
     return { success: false, error: 'Please describe what you would like to order.' };
   }
@@ -50,10 +57,10 @@ export async function submitOrder(profile: Profile, input: SubmitOrderInput): Pr
 
   const { error } = await supabase.from('orders').insert({
     id,
-    user_id: profile.id,
-    name: input.name?.trim() || profile.name,
-    wa: input.wa?.trim() || profile.wa,
-    email: profile.email,
+    user_id: profile?.id ?? null,
+    name: input.name?.trim() || profile?.name || '',
+    wa: input.wa?.trim() || profile?.wa || '',
+    email: profile?.email ?? '',
     order_details: input.orderDetails.trim(),
     order_type: input.orderType,
     notes: input.notes.trim() || null,
