@@ -41,14 +41,14 @@ export default function DashboardPage() {
 
   if (checking || !staff) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f0f0f' }}>
+      <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f0f0f' }}>
         <p style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-body)' }}>Verifying access...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#0f0f0f' }}>
+    <div style={{ minHeight: '100dvh', backgroundColor: '#0f0f0f' }}>
       <DashboardHeader staff={staff} onRefresh={handleRefresh} onLogout={handleLogout} />
       <OrderBoard key={refreshKey} staff={staff} />
       {staff.role === 'owner' && <StaffManagement />}

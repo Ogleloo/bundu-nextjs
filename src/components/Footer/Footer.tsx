@@ -7,10 +7,15 @@ export default function Footer() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem', marginBottom: '2.5rem' }}>
 
           <div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 900, marginBottom: '0.75rem' }}>
-              <span style={{ color: 'var(--fire-red)' }}>Bundu </span>
-              <span style={{ color: 'var(--sun-yellow)' }}>Foods</span>
-            </div>
+            {/* background is --charcoal, so the cream footer-logo (not nav-logo) */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo/footer-logo.png"
+              srcSet="/logo/footer-logo.png 1x, /logo/footer-logo@2x.png 2x"
+              alt="Bundu Foods"
+              height={40}
+              style={{ display: 'block', height: 40, width: 'auto', marginBottom: '0.75rem' }}
+            />
             <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.6 }}>
               Khandisa Reserve, 1 Old Main Road,<br />KwaDlangezwa, Empangeni, 3886
             </p>
@@ -80,6 +85,11 @@ export default function Footer() {
               GTS Captures Studios
             </a>
           </p>
+          {/* Only entry point to the staff portal — nothing else on the site links here */}
+          <Link href="/staff-login"
+            style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.2)', textDecoration: 'none' }}>
+            Staff Login
+          </Link>
         </div>
       </div>
     </footer>

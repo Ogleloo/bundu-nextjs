@@ -12,7 +12,7 @@ interface AuthCardProps {
 
 export default function AuthCard({ activeTab, children }: AuthCardProps) {
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-chalk px-4 py-8">
+    <div className="min-h-[calc(100dvh-64px)] flex items-center justify-center bg-chalk px-4 py-8">
       <div className="bg-paper border border-kraft rounded-md max-w-md w-full overflow-hidden shadow-2xl">
         <div className="bg-burgundy px-8 py-8 text-center border-b-[3px] border-double border-paper">
           <h2 className="font-display text-2xl text-paper">Bundu Foods</h2>

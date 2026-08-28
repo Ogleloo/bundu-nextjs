@@ -43,7 +43,7 @@ export default function SignupPage() {
   };
 
   if (done) return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--cream)' }}>
+    <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--cream)' }}>
       <div style={{ textAlign: 'center' }}>
         <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🍳</div>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', color: 'var(--fire-red)' }}>
@@ -55,7 +55,7 @@ export default function SignupPage() {
   );
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem', backgroundColor: 'var(--cream)' }}>
+    <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem', backgroundColor: 'var(--cream)' }}>
       <div style={{ width: '100%', maxWidth: 420 }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <Link href="/" style={{ textDecoration: 'none' }}>

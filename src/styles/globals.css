@@ -57,7 +57,13 @@
   --moss:               var(--tree-green);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  /* Kill the grey flash iOS/Android paint over tapped elements */
+  -webkit-tap-highlight-color: transparent;
+}
 html { scroll-behavior: smooth; }
 
 body {
@@ -69,3 +75,79 @@ body {
 
 .font-display { font-family: var(--font-display); }
 .font-script  { font-family: var(--font-script); }
+
+/* ============================================================
+   MOBILE / iOS SAFARI FIXES
+============================================================ */
+
+/* Below 16px, iOS Safari zooms the viewport in when a field is
+   focused. Force the floor on every form control. Components that
+   deliberately want a bigger field still win via inline style. */
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
+/* Fixed/sticky bottom bars must clear the iPhone home indicator.
+   Add this class alongside the positioning. */
+.safe-bottom {
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+}
+
+/* Media never forces the page wider than the screen at 360px. */
+img,
+video {
+  max-width: 100%;
+}
+
+/* ============================================================
+   LOGO LOADER
+   The Bundu mark with a fire-coloured ring sweeping around it.
+   The ring is a rotating conic-gradient masked to a 6px band by
+   a radial-gradient. Pure CSS, no library. Consumed by
+   src/components/UI/LogoLoader.tsx.
+============================================================ */
+.logo-loader {
+  position: relative;
+  display: inline-block;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+}
+
+.logo-loader__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    var(--sun-yellow) 180deg,
+    var(--fire-red) 320deg,
+    transparent 360deg
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 6px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 6px));
+  animation: logo-loader-spin 0.9s linear infinite;
+}
+
+.logo-loader__mark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 62%;
+  height: 62%;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+}
+
+@keyframes logo-loader-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Don't spin fast at people who asked the OS for less motion —
+   keep the ring turning, just slowly. */
+@media (prefers-reduced-motion: reduce) {
+  .logo-loader__ring { animation-duration: 6s; }
+}
