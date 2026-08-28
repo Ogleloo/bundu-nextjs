@@ -7,13 +7,23 @@ import type { MenuItem } from '@/types';
 
 const supabase = createClient();
 
-/** Get all available menu items, grouped-ready (sorted by category + sort_order) */
+/**
+ * Get all available menu items in menu order.
+ *
+ * sort_order is banded per category (Traditional Meals 1–11, Wings
+ * 10–14, Grilled Chicken 20–23, Burgers 30s, Wors 40s, Platters 50s,
+ * Fries 60s, Extras 70s, Drinks 80s), so ordering by sort_order alone
+ * yields both the right category sequence and the right order within
+ * each category. Ordering by category first would sort the tabs
+ * alphabetically (Burgers, Drinks, Extras…) instead.
+ * groupByCategory keys categories by first appearance, so the tab
+ * order follows this sort.
+ */
 export async function getMenuItems(): Promise<MenuItem[]> {
   const { data, error } = await supabase
     .from('menu_items')
     .select('*')
     .eq('available', true)
-    .order('category', { ascending: true })
     .order('sort_order', { ascending: true });
 
   if (error) {

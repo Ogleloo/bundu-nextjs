@@ -2,9 +2,9 @@
 // CHALKBOARD MENU — tabbed menu display
 // Fetches items via menuService. Three outcomes are handled
 // separately: still loading, load failed, and loaded-but-empty
-// (owner hasn't added the menu yet — placeholders shown).
-// Edit menu items in Supabase Table Editor -> menu_items,
-// or build an admin form later in src/app/dashboard.
+// (owner hasn't captured the menu yet — honest empty state, no
+// sample food). Edit menu items in Supabase Table Editor ->
+// menu_items, or build an admin form later in src/app/dashboard.
 // ============================================================
 'use client';
 
@@ -12,22 +12,13 @@ import { useState, useEffect } from 'react';
 import { getMenuItems, groupByCategory } from '@/services/menuService';
 import ConnectionError from '@/components/UI/ConnectionError';
 import LogoLoader from '@/components/UI/LogoLoader';
+import { WHATSAPP_ORDER_URL } from '@/lib/contact';
 import type { MenuItem } from '@/types';
-
-const PLACEHOLDER_ITEMS: MenuItem[] = [
-  { id: 'p1', category: 'Breakfast', name: 'Bundu Famous Breakfast', description: 'Eggs, bacon, sausage, toast & hash browns', price: 75, available: true, sort_order: 1 },
-  { id: 'p2', category: 'Breakfast', name: 'Avo Toast', description: 'Smashed avo on sourdough, feta & chilli flakes', price: 55, available: true, sort_order: 2 },
-  { id: 'p3', category: 'Mocktails & Cocktails', name: 'Bundu Sunrise', description: 'Orange, passionfruit & grenadine', price: 45, available: true, sort_order: 1 },
-  { id: 'p4', category: 'Mocktails & Cocktails', name: 'Mojito', description: 'Classic mint & lime', price: 60, available: true, sort_order: 2 },
-  { id: 'p5', category: 'Milkshakes', name: 'Meltdown Milkshake', description: 'Chocolate, caramel & cookie crumble', price: 50, available: true, sort_order: 1 },
-  { id: 'p6', category: 'Milkshakes', name: 'Strawberry Dream', description: 'Fresh strawberry & vanilla', price: 45, available: true, sort_order: 2 },
-];
 
 export default function ChalkboardMenu() {
   const [items, setItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
-  const [usingPlaceholders, setUsingPlaceholders] = useState(false);
   const [activeTab, setActiveTab] = useState<string>('');
 
   // Bumped by the retry button to re-run the fetch below
@@ -40,22 +31,12 @@ export default function ChalkboardMenu() {
       try {
         const data = await getMenuItems();
         if (cancelled) return;
-
-        if (data.length === 0) {
-          // Reached Supabase fine, the menu just isn't captured yet
-          setItems(PLACEHOLDER_ITEMS);
-          setUsingPlaceholders(true);
-          setActiveTab(PLACEHOLDER_ITEMS[0].category);
-        } else {
-          setItems(data);
-          setUsingPlaceholders(false);
-          setActiveTab(data[0].category);
-        }
+        setItems(data);
+        setActiveTab(data[0]?.category ?? '');
       } catch (err) {
         console.warn('[ChalkboardMenu] menu load failed:', err);
         if (!cancelled) {
           setItems([]);
-          setUsingPlaceholders(false);
           setFailed(true);
         }
       } finally {
@@ -81,7 +62,7 @@ export default function ChalkboardMenu() {
     );
   }
 
-  // Couldn't reach the menu — don't pass sample prices off as the real menu
+  // Couldn't reach the menu — don't guess at what's on it
   if (failed) {
     return (
       <section id="menu" className="bg-chalk text-paper px-4 md:px-8 py-16">
@@ -98,6 +79,33 @@ export default function ChalkboardMenu() {
     );
   }
 
+  // Reached the database fine, it just has no items yet — say so
+  // honestly rather than showing a sample menu the kitchen doesn't serve
+  if (items.length === 0) {
+    return (
+      <section id="menu" className="bg-chalk text-paper px-4 md:px-8 py-16">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="font-script text-2xl text-chalk-yellow mb-1">what&apos;s cooking</p>
+          <h2 className="font-display text-3xl md:text-4xl mb-6">Our Menu</h2>
+          <div className="text-4xl mb-3">✍️</div>
+          <p className="text-sm text-paper/70 max-w-sm mx-auto mb-5">
+            The menu is being updated. Message us on WhatsApp and we&apos;ll send it through and take your order.
+          </p>
+          <a
+            href={WHATSAPP_ORDER_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded text-sm font-semibold uppercase tracking-wide text-white transition-transform hover:scale-105"
+            style={{ backgroundColor: '#25D366' }}
+          >
+            <span className="text-lg">💬</span>
+            Order on WhatsApp
+          </a>
+        </div>
+      </section>
+    );
+  }
+
   const grouped = groupByCategory(items);
   const categories = Object.keys(grouped);
 
@@ -106,12 +114,6 @@ export default function ChalkboardMenu() {
       <div className="max-w-3xl mx-auto">
         <p className="font-script text-2xl text-chalk-yellow text-center mb-1">what&apos;s cooking</p>
         <h2 className="font-display text-3xl md:text-4xl text-center mb-8">Our Menu</h2>
-
-        {usingPlaceholders && (
-          <p className="text-center text-xs text-paper/50 mb-6 italic">
-            Showing sample menu — owner can add the real menu via the dashboard.
-          </p>
-        )}
 
         {/* Tabs */}
         <div className="flex flex-wrap justify-center gap-2 mb-8">
