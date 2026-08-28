@@ -127,6 +127,19 @@ export default function LoginPage() {
                 </Link>
               </p>
             </div>
+
+            {/* Guests can order without signing up */}
+            <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
+              <Link href="/menu" style={{
+                display: 'block', textAlign: 'center', width: '100%',
+                padding: '0.85rem', borderRadius: '8px',
+                border: '2px solid var(--border)', color: 'var(--charcoal)',
+                fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none',
+                fontFamily: 'var(--font-body)',
+              }}>
+                Order without an account
+              </Link>
+            </div>
           </div>
         </div>
       </div>
